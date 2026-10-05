@@ -24,14 +24,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Kitchen
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.example.app.features.auth.LoginScreen
 import com.example.app.features.device.add.AddDeviceScreen
 import com.example.app.features.device.detail.DetailScreen
 import com.example.app.model.Heladera
@@ -48,6 +54,7 @@ import com.example.app.model.HeladeraStatus
 import com.example.app.model.calcularEstado
 import com.example.app.ui.components.BottomNavDestination
 import com.example.app.ui.components.CommonHeader
+import com.example.app.ui.components.ConfirmDeleteDialog
 import com.example.app.ui.components.ErrorMessage
 import com.example.app.ui.components.NavigationBar
 import com.example.app.ui.components.NextButton
@@ -72,6 +79,8 @@ class HomeScreen : Screen {
             viewModel = viewModel,
             onAddDevice = { navigator?.push(AddDeviceScreen()) },
             onHeladeraClick = { id -> navigator?.push(DetailScreen(id)) },
+            // Vuelvo al login y borro el historial, así "atrás" no regresa al Home
+            onLogout = { navigator?.replaceAll(LoginScreen()) },
             onNavigate = { destination ->
                 when (destination) {
                     BottomNavDestination.Home -> Unit
@@ -97,6 +106,7 @@ fun HomeContent(
     viewModel: HomeViewModel,
     onAddDevice: () -> Unit,
     onHeladeraClick: (Long) -> Unit,
+    onLogout: () -> Unit,
     onNavigate: (BottomNavDestination) -> Unit
 ) {
 
@@ -104,6 +114,9 @@ fun HomeContent(
     val isLoading by viewModel.isLoading.collectAsState(false)
     val isError   by viewModel.isError.collectAsState(false)
     val heladeras by viewModel.heladeras.collectAsState()
+
+    // Diálogo de cerrar sesión
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
     // Carga de datos
     LaunchedEffect(Unit) {
@@ -119,7 +132,18 @@ fun HomeContent(
         Column(modifier = Modifier.fillMaxSize()) {
 
             // Encabezado
-            CommonHeader(title = "Mis heladeras")
+            CommonHeader(
+                title = "Mis heladeras",
+                actions = {
+                    IconButton(onClick = { showLogoutDialog = true }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
+                            contentDescription = "Cerrar sesión",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+            )
 
             // Botón para agregar un nuevo dispositivo
             Box(
@@ -158,6 +182,20 @@ fun HomeContent(
             NavigationBar(
                 selectedDestination = BottomNavDestination.Home,
                 onDestinationSelected = onNavigate
+            )
+        }
+
+        // Confirmación para cerrar sesión
+        if (showLogoutDialog) {
+            ConfirmDeleteDialog(
+                title = "¿Cerrar sesión?",
+                message = "Vas a volver a la pantalla de inicio de sesión.",
+                confirmText = "Cerrar sesión",
+                onConfirm = {
+                    showLogoutDialog = false
+                    onLogout()
+                },
+                onDismiss = { showLogoutDialog = false }
             )
         }
 
