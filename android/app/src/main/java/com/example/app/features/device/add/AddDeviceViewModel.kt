@@ -3,6 +3,8 @@ package com.example.app.features.device.add
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app.features.device.ValidacionParametros
+import com.example.app.features.device.validarParametros
 import com.example.app.model.HeladeraRequest
 import com.example.app.network.ApiClient
 import com.example.app.network.HeladeraService
@@ -120,7 +122,7 @@ sealed interface ValidacionHeladera {
 
 /**
  * Valida los campos del formulario (como texto) y, si son correctos,
- * arma el request para el servidor. Acepta coma o punto como separador decimal.
+ * arma el request para el servidor. Los límites y el intervalo se validan con validarParametros.
  */
 fun validarNuevaHeladera(
     nombre: String,
@@ -133,30 +135,15 @@ fun validarNuevaHeladera(
         return ValidacionHeladera.Error("Ingresá un nombre para el dispositivo.")
     }
 
-    val minima = temperaturaMinima.aDecimal()
-        ?: return ValidacionHeladera.Error("La temperatura mínima debe ser un número.")
-
-    val maxima = temperaturaMaxima.aDecimal()
-        ?: return ValidacionHeladera.Error("La temperatura máxima debe ser un número.")
-
-    if (minima > maxima) {
-        return ValidacionHeladera.Error("La temperatura mínima no puede ser mayor que la máxima.")
-    }
-
-    val minutos = intervalo.trim().toIntOrNull()
-    if (minutos == null || minutos < 1) {
-        return ValidacionHeladera.Error("El intervalo debe ser de al menos 1 minuto.")
-    }
-
-    return ValidacionHeladera.Ok(
-        HeladeraRequest(
-            nombre = nombre.trim(),
-            temperaturaMinima = minima,
-            temperaturaMaxima = maxima,
-            intervaloLecturaMinutos = minutos
+    return when (val parametros = validarParametros(temperaturaMinima, temperaturaMaxima, intervalo)) {
+        is ValidacionParametros.Error -> ValidacionHeladera.Error(parametros.mensaje)
+        is ValidacionParametros.Ok -> ValidacionHeladera.Ok(
+            HeladeraRequest(
+                nombre = nombre.trim(),
+                temperaturaMinima = parametros.request.temperaturaMinima,
+                temperaturaMaxima = parametros.request.temperaturaMaxima,
+                intervaloLecturaMinutos = parametros.request.intervaloLecturaMinutos
+            )
         )
-    )
+    }
 }
-
-/** "4,5" -> 4.5  |  "-18" -> -18.0  |  "abc" -> null */
-private fun String.aDecimal(): Double? = trim().replace(',', '.').toDoubleOrNull()

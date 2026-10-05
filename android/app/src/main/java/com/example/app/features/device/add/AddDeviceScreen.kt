@@ -14,15 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.app.ui.components.ErrorMessage
+import com.example.app.ui.components.FormField
 import com.example.app.ui.components.NextButton
 
 private val TextPrimary = Color(0xFF1A1F36)
@@ -229,31 +227,4 @@ private fun AddDeviceHeader(onBack: () -> Unit) {
         // Espacio del mismo ancho que el botón de volver, para centrar el título
         Spacer(modifier = Modifier.size(48.dp))
     }
-}
-
-/*
- * ================================================================
- * FORM FIELD
- * ================================================================
- */
-@Composable
-private fun FormField(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String,
-    keyboardType: KeyboardType,
-    modifier: Modifier = Modifier,
-    imeAction: ImeAction = ImeAction.Next
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label) },
-        placeholder = { Text(placeholder) },
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp),
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
-        modifier = modifier.fillMaxWidth()
-    )
 }
