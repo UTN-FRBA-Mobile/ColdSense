@@ -2,6 +2,7 @@ package com.example.app.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,12 +31,14 @@ import androidx.compose.ui.unit.sp
  * @param title Texto del título.
  * @param modifier Modificador opcional para personalizar el contenedor.
  * @param backgroundColor Color de fondo del encabezado (incluye la zona de la barra de estado).
+ * @param actions Botones opcionales que se muestran a la derecha del título.
  */
 @Composable
 fun CommonHeader(
     title: String,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.background
+    backgroundColor: Color = MaterialTheme.colorScheme.background,
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -56,9 +59,13 @@ fun CommonHeader(
         // Título
         Text(
             text = title,
+            modifier = Modifier.weight(1f),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
         )
+
+        // Acciones opcionales (ej: cerrar sesión)
+        actions()
     }
 }

@@ -32,14 +32,16 @@ import androidx.compose.ui.window.Dialog
  *
  * @param title Título del diálogo.
  * @param message Texto que explica la acción.
+ * @param confirmText Texto del botón de confirmar. Por defecto es "Eliminar".
  * @param isLoading Mientras es true, muestra un spinner y no se puede cerrar.
- * @param onConfirm Acción al tocar "Eliminar".
+ * @param onConfirm Acción al tocar el botón de confirmar.
  * @param onDismiss Acción al tocar "Cancelar" o fuera del diálogo.
  */
 @Composable
 fun ConfirmDeleteDialog(
     title: String = "¿Eliminar dispositivo?",
     message: String = "Esta acción no se puede deshacer. Se eliminará la heladera y todo su historial de lecturas asociado.",
+    confirmText: String = "Eliminar",
     isLoading: Boolean = false,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
@@ -125,7 +127,7 @@ fun ConfirmDeleteDialog(
                             modifier = Modifier.size(20.dp)
                         )
                     } else {
-                        Text(text = "Eliminar", fontWeight = FontWeight.Bold)
+                        Text(text = confirmText, fontWeight = FontWeight.Bold)
                     }
                 }
 
