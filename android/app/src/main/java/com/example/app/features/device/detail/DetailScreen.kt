@@ -52,6 +52,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.example.app.features.device.edit.EditDeviceScreen
+import com.example.app.features.device.lecturas.LecturasScreen
 import com.example.app.model.Heladera
 import com.example.app.model.HeladeraStatus
 import com.example.app.model.Lectura
@@ -92,12 +94,8 @@ class DetailScreen(
             heladeraId = heladeraId,
             viewModel = viewModel,
             onBack = { navigator?.pop() },
-            onEdit = {
-                // TODO: navigator?.push(EditDeviceScreen(heladeraId))
-            },
-            onVerTodas = {
-                // TODO: navigator?.push(LecturasScreen(heladeraId))
-            },
+            onEdit = { navigator?.push(EditDeviceScreen(heladeraId)) },
+            onVerTodas = { navigator?.push(LecturasScreen(heladeraId)) },
             onDeleted = { navigator?.pop() }
         )
     }
