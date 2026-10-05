@@ -3,10 +3,12 @@ package com.example.app.network
 import com.example.app.model.Heladera
 import com.example.app.model.HeladeraRequest
 import com.example.app.model.Lectura
+import com.example.app.model.ParametrosRequest
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -23,6 +25,9 @@ interface HeladeraService {
 
     @POST("heladeras")
     suspend fun crearHeladera(@Body request: HeladeraRequest): Heladera
+
+    @PUT("heladeras/{id}/parametros")
+    suspend fun actualizarParametros(@Path("id") id: Long, @Body request: ParametrosRequest): Heladera
 
     @DELETE("heladeras/{id}")
     suspend fun eliminarHeladera(@Path("id") id: Long)
