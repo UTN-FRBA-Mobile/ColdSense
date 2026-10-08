@@ -39,4 +39,6 @@ object ApiClient {
         .build()
 
     val heladeraService: HeladeraService = retrofit.create(HeladeraService::class.java)
+
+    val dispositivoService: DispositivoService = retrofit.create(DispositivoService::class.java)
 }
