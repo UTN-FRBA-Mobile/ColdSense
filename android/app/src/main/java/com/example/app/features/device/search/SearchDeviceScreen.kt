@@ -187,7 +187,7 @@ private fun Buscando(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Asegurate de que el sensor esté encendido y cerca de tu celular.",
+            text = "Asegurate de que el sensor esté encendido y cerca del bridge.",
             fontSize = 14.sp,
             color = TextSecondary,
             textAlign = TextAlign.Center
@@ -269,7 +269,7 @@ private fun SinResultados(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Revisá que el sensor esté encendido y volvé a buscar.",
+            text = "Revisá que el sensor esté encendido y cerca del bridge, y volvé a buscar.",
             fontSize = 14.sp,
             color = TextSecondary,
             textAlign = TextAlign.Center

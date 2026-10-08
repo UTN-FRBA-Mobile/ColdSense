@@ -11,7 +11,8 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Simula la búsqueda de sensores cerca (como "Agregar lámpara" en Philips Hue).
+ * Simula la búsqueda de sensores que hace el bridge, como "Agregar lámpara" en Philips Hue:
+ * el bridge encuentra los sensores a su alcance (ej: por Zigbee) y la app solo pide el resultado.
  * Los sensores encontrados quedan pendientes hasta que se vinculan a una heladera.
  */
 @Service
