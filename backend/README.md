@@ -18,11 +18,12 @@ Queda escuchando en http://localhost:8080
 | GET | /heladeras | Lista todas |
 | GET | /heladeras/{id} | Una heladera |
 | GET | /heladeras/{id}/lecturas?limit=5 | Últimas lecturas (más nueva primero) |
-| POST | /heladeras | Crea una heladera |
+| POST | /heladeras | Crea una heladera (con `numeroSerie` vincula un sensor encontrado) |
 | PUT | /heladeras/{id} | Modifica nombre/límites/intervalo |
 | PUT | /heladeras/{id}/parametros | Modifica límites e intervalo |
 | PUT | /heladeras/{id}/temperatura | Simula lectura del sensor |
 | DELETE | /heladeras/{id} | Elimina la heladera y su historial |
+| POST | /dispositivos/busqueda | Busca sensores nuevos (tarda ~3 s y siempre encuentra uno) |
 
 ## Ejemplos
 ```bash
@@ -32,6 +33,12 @@ curl "http://localhost:8080/heladeras/1/lecturas?limit=5"
 curl -X POST http://localhost:8080/heladeras \
   -H "Content-Type: application/json" \
   -d '{"nombre":"Heladera Bar","temperaturaMinima":2.0,"temperaturaMaxima":6.0}'
+
+# Agregar un sensor como en la app: buscar y crear la heladera con su número de serie
+curl -X POST http://localhost:8080/dispositivos/busqueda
+curl -X POST http://localhost:8080/heladeras \
+  -H "Content-Type: application/json" \
+  -d '{"nombre":"Heladera Bar","temperaturaMinima":2.0,"temperaturaMaxima":6.0,"numeroSerie":"CS-4F2A"}'
 
 curl -X PUT http://localhost:8080/heladeras/1/parametros \
   -H "Content-Type: application/json" \
