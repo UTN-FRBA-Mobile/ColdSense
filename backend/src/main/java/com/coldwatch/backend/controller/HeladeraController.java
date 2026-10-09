@@ -26,7 +26,7 @@ import java.util.List;
  *   GET    /heladeras                          -> lista todas
  *   GET    /heladeras/{id}                     -> una heladera
  *   GET    /heladeras/{id}/lecturas?limit=5    -> últimas lecturas (más nueva primero)
- *   POST   /heladeras                          -> crea una heladera (201)
+ *   POST   /heladeras                          -> crea una heladera (201). Con "numeroSerie" vincula un sensor encontrado
  *   PUT    /heladeras/{id}                     -> modifica nombre / límites / intervalo
  *   PUT    /heladeras/{id}/parametros          -> modifica límites e intervalo (pantalla Editar parámetros)
  *   PUT    /heladeras/{id}/temperatura         -> simula una lectura del sensor

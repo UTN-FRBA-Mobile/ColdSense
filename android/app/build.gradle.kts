@@ -1,7 +1,15 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+}
+
+// local.properties no se sube al repo: cada uno configura ahí lo de su máquina
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
 }
 
 android {
@@ -20,6 +28,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // URL del backend. Por defecto 10.0.2.2, que desde el emulador apunta al localhost de tu PC.
+        // Para un celular físico, agregar en local.properties: api.baseUrl=http://<IP de tu PC>:8080/
+        val apiBaseUrl = localProperties.getProperty("api.baseUrl", "http://10.0.2.2:8080/")
+        buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
     }
 
     buildTypes {
@@ -37,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
