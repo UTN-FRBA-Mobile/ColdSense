@@ -1,0 +1,1012 @@
+<!doctype html>
+<!--
+  Simulador de sensores del bridge ColdSense.
+  Lo sirve el mismo backend en http://localhost:8080 y usa sus endpoints:
+    GET /heladeras, PUT /heladeras/{id}/temperatura, GET /notificaciones/estado
+-->
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador de sensores · ColdSense</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;500;700&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --tinta: #0a1020;
+      --panel: #0f182b;
+      --panel-alto: #141f37;
+      --borde: #21304e;
+      --borde-suave: #19253f;
+      --texto: #e7eef8;
+      --apagado: #8c99b0;
+      --tenue: #5d6a82;
+      --hielo: #8fd3ff;
+      --azul: #1e6fe0;
+      --azul-vivo: #3b86f0;
+      --ok: #3fcf7e;
+      --ok-fondo: rgba(63, 207, 126, 0.12);
+      --alerta: #ff5b4f;
+      --alerta-fondo: rgba(255, 91, 79, 0.13);
+      --sin: #8c99b0;
+      --sin-fondo: rgba(140, 153, 176, 0.12);
+      --ambar: #f5b342;
+      --ambar-fondo: rgba(245, 179, 66, 0.12);
+      --mono: "Martian Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+      --sans: "Schibsted Grotesk", "Segoe UI", system-ui, sans-serif;
+      --radio: 16px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { color-scheme: dark; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--sans);
+      color: var(--texto);
+      background:
+        radial-gradient(1100px 560px at 88% -12%, rgba(143, 211, 255, 0.11), transparent 60%),
+        radial-gradient(900px 520px at -12% 112%, rgba(30, 111, 224, 0.14), transparent 60%),
+        var(--tinta);
+    }
+
+    /* Cuadrícula de "papel milimetrado" que se desvanece hacia los bordes */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(143, 211, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(143, 211, 255, 0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
+      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+    }
+
+    /* ---------- Encabezado ---------- */
+    .barra {
+      position: relative;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px 24px;
+      padding: 28px clamp(16px, 4vw, 48px) 8px;
+    }
+
+    .marca { display: flex; align-items: center; gap: 16px; }
+
+    .marca__logo {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #173057, #0d1a31);
+      border: 1px solid var(--borde);
+      box-shadow: 0 0 0 4px rgba(143, 211, 255, 0.05), 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .marca__sup {
+      margin: 0 0 4px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--hielo);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(24px, 3.2vw, 34px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .push {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--borde);
+      background: var(--panel);
+      font-size: 14px;
+      color: var(--apagado);
+    }
+
+    .push strong { color: var(--texto); font-weight: 600; }
+    .push[data-tono="ok"] { border-color: rgba(63, 207, 126, 0.35); }
+    .push[data-tono="aviso"] { border-color: rgba(245, 179, 66, 0.4); }
+    .push[data-tono="error"] { border-color: rgba(255, 91, 79, 0.45); }
+
+    .led {
+      flex: none;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--color-led, var(--sin));
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-led, var(--sin)) 22%, transparent),
+                  0 0 12px var(--color-led, var(--sin));
+    }
+
+    .push[data-tono="ok"] .led { --color-led: var(--ok); }
+    .push[data-tono="aviso"] .led { --color-led: var(--ambar); }
+    .push[data-tono="error"] .led { --color-led: var(--alerta); }
+
+    /* ---------- Distribución ---------- */
+    .layout {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 28px;
+      align-items: start;
+      padding: 16px clamp(16px, 4vw, 48px) 48px;
+    }
+
+    @media (max-width: 1020px) {
+      .layout { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    .intro {
+      max-width: 70ch;
+      margin: 0 0 22px;
+      color: var(--apagado);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    h2 {
+      margin: 0 0 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--apagado);
+    }
+
+    .canales {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
+      gap: 18px;
+    }
+
+    /* ---------- Canal (una heladera) ---------- */
+    .canal {
+      --estado: var(--ok);
+      --estado-fondo: var(--ok-fondo);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 20px 20px 18px 24px;
+      border-radius: var(--radio);
+      border: 1px solid var(--borde-suave);
+      background: linear-gradient(180deg, var(--panel-alto), var(--panel));
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+      animation: entrar 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+      animation-delay: calc(var(--i, 0) * 70ms);
+    }
+
+    /* Franja de color del estado, como el piloto de un equipo */
+    .canal::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4px;
+      background: var(--estado);
+      box-shadow: 0 0 18px var(--estado);
+      opacity: 0.9;
+    }
+
+    .canal[data-estado="ALERTA"] { --estado: var(--alerta); --estado-fondo: var(--alerta-fondo); border-color: rgba(255, 91, 79, 0.28); }
+    .canal[data-estado="SIN_CONEXION"] { --estado: var(--sin); --estado-fondo: var(--sin-fondo); }
+
+    .canal.destello { animation: destello 1s ease-out; }
+
+    .canal__cab {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .canal__ch {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--tenue);
+    }
+
+    .canal__nombre {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 11px 5px 9px;
+      border-radius: 999px;
+      background: var(--estado-fondo);
+      color: var(--estado);
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .chip .led { --color-led: var(--estado); width: 8px; height: 8px; }
+    .canal[data-estado="ALERTA"] .chip .led { animation: latido 1.2s ease-in-out infinite; }
+    .canal[data-estado="SIN_CONEXION"] .chip .led { box-shadow: none; }
+
+    .lectura {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-top: -2px;
+    }
+
+    .lectura__valor {
+      font-family: var(--mono);
+      font-size: 46px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .canal[data-estado="ALERTA"] .lectura__valor { color: var(--alerta); text-shadow: 0 0 24px rgba(255, 91, 79, 0.35); }
+    .canal[data-estado="SIN_CONEXION"] .lectura__valor { color: var(--tenue); }
+
+    .lectura__unidad {
+      font-family: var(--mono);
+      font-size: 16px;
+      color: var(--apagado);
+    }
+
+    .canal__meta {
+      margin: -8px 0 0;
+      font-size: 13px;
+      color: var(--apagado);
+    }
+
+    /* ---------- Escala de temperatura ---------- */
+    .escala {
+      position: relative;
+      padding-top: 20px;
+    }
+
+    .escala__pista {
+      position: relative;
+      height: 34px;
+      border-radius: 10px;
+      background:
+        repeating-linear-gradient(90deg, transparent 0 7px, rgba(143, 211, 255, 0.035) 7px 8px),
+        #0b1426;
+      border: 1px solid var(--borde);
+    }
+
+    /* Franja del rango configurado (mín a máx) */
+    .escala__banda {
+      position: absolute;
+      top: -1px;
+      bottom: -1px;
+      background: var(--ok-fondo);
+      border-left: 2px solid rgba(63, 207, 126, 0.75);
+      border-right: 2px solid rgba(63, 207, 126, 0.75);
+    }
+
+    /* Las etiquetas van por fuera de la franja para que no se pisen en rangos chicos */
+    .escala__limite {
+      position: absolute;
+      top: -20px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--ok);
+      white-space: nowrap;
+    }
+
+    .escala__limite--min { transform: translateX(calc(-100% - 6px)); }
+    .escala__limite--max { transform: translateX(6px); }
+
+    /* Marca de la lectura actual (la que tiene el bridge ahora) */
+    .escala__actual {
+      position: absolute;
+      top: 5px;
+      bottom: 5px;
+      width: 3px;
+      margin-left: -1.5px;
+      border-radius: 2px;
+      background: var(--estado);
+      box-shadow: 0 0 10px var(--estado);
+      transition: left 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .escala__actual[hidden] { display: none; }
+
+    /* Control para elegir la nueva lectura: la aguja */
+    .escala__control {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 20px;
+      width: 100%;
+      height: 34px;
+      margin: 0;
+      background: transparent;
+      cursor: ew-resize;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .escala__control::-webkit-slider-runnable-track { height: 34px; background: transparent; }
+    .escala__control::-moz-range-track { height: 34px; background: transparent; }
+
+    .escala__control::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 46px;
+      margin-top: -6px;
+      border-radius: 7px;
+      background: var(--hielo);
+      border: 3px solid var(--tinta);
+      box-shadow: 0 0 0 1px var(--hielo), 0 0 18px rgba(143, 211, 255, 0.7);
+    }
+
+    .escala__control::-moz-range-thumb {
+      width: 8px;
+      height: 40px;
+      border-radius: 7px;
+      background: var(--hielo);
+      border: 3px solid var(--tinta);
+      box-shadow: 0 0 0 1px var(--hielo), 0 0 18px rgba(143, 211, 255, 0.7);
+    }
+
+    .escala__control:focus-visible { outline: none; }
+    .escala__control:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--azul-vivo), 0 0 22px rgba(143, 211, 255, 0.9); }
+    .escala__control:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(--azul-vivo), 0 0 22px rgba(143, 211, 255, 0.9); }
+
+    .escala__ticks {
+      position: relative;
+      height: 22px;
+      margin-top: 6px;
+    }
+
+    .tick {
+      position: absolute;
+      top: 0;
+      width: 1px;
+      height: 5px;
+      background: var(--tenue);
+    }
+
+    .tick--grande { height: 8px; background: var(--apagado); }
+
+    .tick span {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--tenue);
+      white-space: nowrap;
+    }
+
+    /* ---------- Nueva lectura ---------- */
+    .propuesta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+      font-size: 13.5px;
+      color: var(--apagado);
+    }
+
+    .propuesta label { display: inline-flex; align-items: center; gap: 8px; }
+
+    .propuesta__num {
+      width: 92px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--borde);
+      background: #0b1426;
+      color: var(--texto);
+      font-family: var(--mono);
+      font-size: 14px;
+    }
+
+    .propuesta__num:focus-visible { outline: 2px solid var(--azul-vivo); outline-offset: 1px; }
+
+    .efecto { font-weight: 600; }
+    .efecto[data-estado="NORMAL"] { color: var(--ok); }
+    .efecto[data-estado="ALERTA"] { color: var(--alerta); }
+    .efecto[data-estado="SIN_CONEXION"] { color: var(--sin); }
+
+    /* ---------- Botones ---------- */
+    .acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--borde);
+    }
+
+    .btn {
+      padding: 9px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--borde);
+      background: rgba(143, 211, 255, 0.04);
+      color: var(--texto);
+      font: 500 13.5px var(--sans);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+
+    .btn:hover { background: rgba(143, 211, 255, 0.09); border-color: #2d4168; }
+    .btn:active { transform: translateY(1px); }
+    .btn:focus-visible { outline: 2px solid var(--azul-vivo); outline-offset: 2px; }
+    .btn:disabled { opacity: 0.5; cursor: wait; }
+
+    .btn--primario {
+      background: var(--azul);
+      border-color: var(--azul);
+      font-weight: 600;
+      box-shadow: 0 6px 18px rgba(30, 111, 224, 0.35);
+    }
+
+    .btn--primario:hover { background: var(--azul-vivo); border-color: var(--azul-vivo); }
+    .btn--alerta:hover { border-color: rgba(255, 91, 79, 0.6); color: #ffb3ad; }
+    .btn--sin:hover { border-color: #3a4a6b; color: var(--apagado); }
+
+    /* ---------- Registro ---------- */
+    .registro {
+      position: sticky;
+      top: 20px;
+      padding: 20px;
+      border-radius: var(--radio);
+      border: 1px solid var(--borde-suave);
+      background: rgba(15, 24, 43, 0.82);
+      backdrop-filter: blur(6px);
+    }
+
+    .eventos {
+      list-style: none;
+      margin: 14px 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: calc(100vh - 160px);
+      overflow-y: auto;
+    }
+
+    .evento {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--panel-alto);
+      border: 1px solid var(--borde-suave);
+      border-left: 3px solid var(--color-evento, var(--borde));
+      animation: entrar 0.35s ease-out both;
+    }
+
+    .evento[data-tipo="push"] { --color-evento: var(--hielo); }
+    .evento[data-tipo="ok"] { --color-evento: var(--ok); }
+    .evento[data-tipo="sin-push"] { --color-evento: var(--ambar); }
+    .evento[data-tipo="error"] { --color-evento: var(--alerta); }
+
+    .evento__cab {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .evento__hora {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--tenue);
+    }
+
+    .evento__cambio {
+      margin: 6px 0 0;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--apagado);
+    }
+
+    .evento__detalle { margin: 6px 0 0; font-size: 13px; color: var(--texto); }
+    .evento[data-tipo="push"] .evento__detalle { color: var(--hielo); }
+    .evento[data-tipo="sin-push"] .evento__detalle { color: var(--ambar); }
+    .evento[data-tipo="error"] .evento__detalle { color: #ffb3ad; }
+
+    .vacio {
+      margin: 14px 0 0;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--tenue);
+    }
+
+    .aviso-carga {
+      grid-column: 1 / -1;
+      padding: 28px;
+      border-radius: var(--radio);
+      border: 1px dashed var(--borde);
+      color: var(--apagado);
+      text-align: center;
+    }
+
+    /* ---------- Animaciones ---------- */
+    @keyframes entrar {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes destello {
+      0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--estado) 55%, transparent), 0 18px 40px rgba(0, 0, 0, 0.28); }
+      100% { box-shadow: 0 0 0 18px transparent, 0 18px 40px rgba(0, 0, 0, 0.28); }
+    }
+
+    @keyframes latido {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="barra">
+    <div class="marca">
+      <span class="marca__logo" aria-hidden="true">
+        <!-- Termómetro con un copo -->
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8fd3ff" stroke-width="1.8" stroke-linecap="round">
+          <path d="M10 13.5V4.5a2 2 0 1 1 4 0v9a4 4 0 1 1-4 0Z"/>
+          <path d="M12 9v6.5" stroke="#3fcf7e"/>
+          <path d="M19.5 3v5M17 5.5h5M17.7 3.7l3.6 3.6M21.3 3.7l-3.6 3.6" stroke-width="1.4"/>
+        </svg>
+      </span>
+      <div>
+        <p class="marca__sup">ColdSense · Bridge</p>
+        <h1>Simulador de sensores</h1>
+      </div>
+    </div>
+    <div id="push" class="push" role="status" data-tono="aviso">
+      <i class="led" aria-hidden="true"></i><span>Conectando con el bridge…</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section aria-labelledby="titulo-sensores">
+      <h2 id="titulo-sensores">Sensores</h2>
+      <p class="intro">
+        Mové la aguja (o escribí un valor) y enviá la lectura, como si la mandara el sensor.
+        Si la heladera queda fuera de rango o sin conexión, el bridge manda una push a los celulares registrados.
+      </p>
+      <div id="canales" class="canales">
+        <p class="aviso-carga">Cargando heladeras…</p>
+      </div>
+    </section>
+
+    <aside class="registro" aria-labelledby="titulo-registro">
+      <h2 id="titulo-registro">Registro</h2>
+      <p id="registro-vacio" class="vacio">
+        Todavía no enviaste lecturas. Cada lectura aparece acá con lo que hizo el bridge.
+      </p>
+      <ol id="eventos" class="eventos" aria-live="polite"></ol>
+    </aside>
+  </main>
+
+  <template id="plantilla-canal">
+    <article class="canal">
+      <header class="canal__cab">
+        <span class="canal__ch"></span>
+        <h3 class="canal__nombre"></h3>
+        <span class="chip"><i class="led" aria-hidden="true"></i><span class="chip__texto"></span></span>
+      </header>
+
+      <div class="lectura">
+        <span class="lectura__valor"></span><span class="lectura__unidad">°C</span>
+      </div>
+      <p class="canal__meta"></p>
+
+      <div class="escala">
+        <div class="escala__pista">
+          <div class="escala__banda"></div>
+          <span class="escala__limite escala__limite--min"></span>
+          <span class="escala__limite escala__limite--max"></span>
+          <div class="escala__actual" title="Lectura actual"></div>
+        </div>
+        <input class="escala__control" type="range" step="0.1">
+        <div class="escala__ticks" aria-hidden="true"></div>
+      </div>
+
+      <div class="propuesta">
+        <label>Nueva lectura <input class="propuesta__num" type="number" step="0.1" inputmode="decimal"> °C</label>
+        <span>Quedaría <span class="efecto"></span></span>
+      </div>
+
+      <div class="acciones">
+        <button type="button" class="btn btn--primario" data-accion="enviar">Enviar lectura</button>
+        <button type="button" class="btn" data-accion="en-rango">En rango</button>
+        <button type="button" class="btn btn--alerta" data-accion="sobre-maximo">Sobre el máximo</button>
+        <button type="button" class="btn btn--sin" data-accion="desconectar">Desconectar sensor</button>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    const REFRESCO_MS = 4000;
+    const MAX_EVENTOS = 40;
+
+    // Misma regla que Heladera.estado() en el backend y calcularEstado() en la app
+    const ETIQUETAS = { NORMAL: "Normal", ALERTA: "En alerta", SIN_CONEXION: "Sin conexión" };
+
+    function estadoDe(temperatura, minima, maxima) {
+      if (temperatura === null || temperatura === undefined) return "SIN_CONEXION";
+      return temperatura < minima || temperatura > maxima ? "ALERTA" : "NORMAL";
+    }
+
+    const redondear = (n) => Math.round(n * 10) / 10;
+    const fmtTemp = (n) => (n === null || n === undefined ? "--.-" : redondear(n).toFixed(1));
+    const fmtLimite = (n) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
+
+    function fmtHora(millis) {
+      if (!millis) return "sin datos";
+      const fecha = new Date(millis);
+      const hora = fecha.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+      const hoy = new Date().toDateString() === fecha.toDateString();
+      return hoy ? `hoy ${hora}` : `${fecha.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit" })} ${hora}`;
+    }
+
+    // Estado de la página
+    const heladeras = new Map();   // id -> heladera (como la devuelve el backend)
+    const pendientes = new Map();  // id -> lectura elegida en la aguja que todavía no se envió
+    const tarjetas = new Map();    // id -> <article>
+    let push = null;               // { activadas, celulares } o null si no hay conexión
+
+    const $canales = document.getElementById("canales");
+    const $eventos = document.getElementById("eventos");
+    const $plantilla = document.getElementById("plantilla-canal");
+
+    async function api(ruta, opciones = {}) {
+      const respuesta = await fetch(ruta, {
+        ...opciones,
+        headers: { "Content-Type": "application/json", ...(opciones.headers || {}) }
+      });
+      if (!respuesta.ok) {
+        let mensaje = `${respuesta.status} ${respuesta.statusText}`;
+        try { mensaje = (await respuesta.json()).error || mensaje; } catch { /* sin body */ }
+        throw new Error(mensaje);
+      }
+      return respuesta.status === 204 ? null : respuesta.json();
+    }
+
+    /* ---------- Estado de las push ---------- */
+    function pintarPush() {
+      const $push = document.getElementById("push");
+      let tono, html;
+      if (push === null) {
+        tono = "error";
+        html = "<strong>Sin conexión con el bridge.</strong> ¿Está corriendo el backend?";
+      } else if (!push.activadas) {
+        tono = "aviso";
+        html = "<strong>Push desactivadas:</strong> falta firebase-credenciales.json";
+      } else if (push.celulares === 0) {
+        tono = "aviso";
+        html = "<strong>Push activas,</strong> pero ningún celular registrado (abrí la app)";
+      } else {
+        tono = "ok";
+        html = `<strong>Push activas</strong> · ${push.celulares} ${push.celulares === 1 ? "celular registrado" : "celulares registrados"}`;
+      }
+      $push.dataset.tono = tono;
+      $push.innerHTML = `<i class="led" aria-hidden="true"></i><span>${html}</span>`;
+    }
+
+    /* ---------- Escala de cada heladera ---------- */
+    // Depende solo de lo que tiene el bridge (no de la aguja), así no se agranda mientras arrastrás
+    function escalaDe(h) {
+      const ancho = h.temperaturaMaxima - h.temperaturaMinima;
+      const margen = Math.max(4, ancho);
+      let desde = Math.floor(h.temperaturaMinima - margen);
+      let hasta = Math.ceil(h.temperaturaMaxima + margen);
+      if (h.temperaturaActual !== null) {
+        desde = Math.min(desde, Math.floor(h.temperaturaActual - 1));
+        hasta = Math.max(hasta, Math.ceil(h.temperaturaActual + 1));
+      }
+      return { desde, hasta };
+    }
+
+    const porcentaje = (valor, { desde, hasta }) =>
+      Math.min(100, Math.max(0, ((valor - desde) / (hasta - desde)) * 100));
+
+    function pintarTicks($ticks, escala) {
+      const rango = escala.hasta - escala.desde;
+      const paso = rango <= 18 ? 1 : 2;
+      const pasoEtiqueta = paso * 2;
+      $ticks.innerHTML = "";
+      for (let v = Math.ceil(escala.desde / paso) * paso; v <= escala.hasta; v += paso) {
+        const tick = document.createElement("i");
+        const conEtiqueta = v % pasoEtiqueta === 0;
+        tick.className = conEtiqueta ? "tick tick--grande" : "tick";
+        tick.style.left = `${porcentaje(v, escala)}%`;
+        if (conEtiqueta) {
+          const etiqueta = document.createElement("span");
+          etiqueta.textContent = v;
+          tick.appendChild(etiqueta);
+        }
+        $ticks.appendChild(tick);
+      }
+    }
+
+    /* ---------- Tarjetas ---------- */
+    function crearTarjeta(h, indice) {
+      const $tarjeta = $plantilla.content.firstElementChild.cloneNode(true);
+      $tarjeta.style.setProperty("--i", indice);
+      $tarjeta.dataset.id = h.id;
+
+      const $control = $tarjeta.querySelector(".escala__control");
+      const $numero = $tarjeta.querySelector(".propuesta__num");
+      $control.setAttribute("aria-label", `Nueva temperatura para ${h.nombre}`);
+
+      $control.addEventListener("input", () => {
+        pendientes.set(h.id, redondear(Number($control.value)));
+        actualizarTarjeta(h.id);
+      });
+
+      $numero.addEventListener("input", () => {
+        const valor = Number($numero.value.replace(",", "."));
+        if ($numero.value.trim() !== "" && Number.isFinite(valor)) {
+          pendientes.set(h.id, redondear(valor));
+          actualizarTarjeta(h.id, { conservarNumero: true });
+        }
+      });
+
+      $numero.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") enviar(h.id, lecturaElegida(h.id));
+      });
+
+      $tarjeta.querySelector(".acciones").addEventListener("click", (e) => {
+        const accion = e.target.closest("button")?.dataset.accion;
+        if (!accion) return;
+        const actual = heladeras.get(h.id);
+        const valores = {
+          "enviar": lecturaElegida(h.id),
+          "en-rango": puntoMedio(actual),
+          "sobre-maximo": redondear(actual.temperaturaMaxima + 3),
+          "desconectar": null
+        };
+        enviar(h.id, valores[accion]);
+      });
+
+      tarjetas.set(h.id, $tarjeta);
+      return $tarjeta;
+    }
+
+    const puntoMedio = (h) => redondear((h.temperaturaMinima + h.temperaturaMaxima) / 2);
+
+    // La lectura que marca la aguja: la elegida, o la actual si no se tocó (o el medio del rango si está desconectada)
+    function lecturaElegida(id) {
+      const h = heladeras.get(id);
+      return pendientes.get(id) ?? h.temperaturaActual ?? puntoMedio(h);
+    }
+
+    function actualizarTarjeta(id, { conservarNumero = false } = {}) {
+      const h = heladeras.get(id);
+      const $t = tarjetas.get(id);
+      if (!h || !$t) return;
+
+      const estado = estadoDe(h.temperaturaActual, h.temperaturaMinima, h.temperaturaMaxima);
+      $t.dataset.estado = estado;
+      $t.querySelector(".canal__ch").textContent = `CH-${String(h.id).padStart(2, "0")}`;
+      $t.querySelector(".canal__nombre").textContent = h.nombre;
+      $t.querySelector(".chip__texto").textContent = ETIQUETAS[estado];
+      $t.querySelector(".lectura__valor").textContent = fmtTemp(h.temperaturaActual);
+      $t.querySelector(".canal__meta").textContent =
+        `Rango ${fmtLimite(h.temperaturaMinima)} a ${fmtLimite(h.temperaturaMaxima)} °C · ` +
+        `Batería ${h.bateria ?? "--"}% · Última lectura ${fmtHora(h.ultimaLectura)}`;
+
+      // Escala: se vuelve a dibujar solo si cambian sus extremos
+      const escala = escalaDe(h);
+      const claveEscala = `${escala.desde}:${escala.hasta}`;
+      if ($t.dataset.escala !== claveEscala) {
+        $t.dataset.escala = claveEscala;
+        pintarTicks($t.querySelector(".escala__ticks"), escala);
+      }
+
+      const $banda = $t.querySelector(".escala__banda");
+      const izquierda = porcentaje(h.temperaturaMinima, escala);
+      const derecha = porcentaje(h.temperaturaMaxima, escala);
+      $banda.style.left = `${izquierda}%`;
+      $banda.style.width = `${derecha - izquierda}%`;
+      const $min = $t.querySelector(".escala__limite--min");
+      const $max = $t.querySelector(".escala__limite--max");
+      $min.style.left = `${izquierda}%`;
+      $min.textContent = `mín ${fmtLimite(h.temperaturaMinima)}`;
+      $max.style.left = `${derecha}%`;
+      $max.textContent = `máx ${fmtLimite(h.temperaturaMaxima)}`;
+
+      const $actual = $t.querySelector(".escala__actual");
+      $actual.hidden = h.temperaturaActual === null;
+      if (h.temperaturaActual !== null) $actual.style.left = `${porcentaje(h.temperaturaActual, escala)}%`;
+
+      // Aguja: si el valor escrito queda fuera de la escala, la aguja se queda en el borde
+      const propuesta = lecturaElegida(id);
+      const $control = $t.querySelector(".escala__control");
+      $control.min = escala.desde;
+      $control.max = escala.hasta;
+      $control.value = propuesta;
+      $control.setAttribute("aria-valuetext", `${fmtTemp(propuesta)} grados`);
+
+      const $numero = $t.querySelector(".propuesta__num");
+      if (!conservarNumero && document.activeElement !== $numero) $numero.value = fmtTemp(propuesta);
+
+      const efecto = estadoDe(propuesta, h.temperaturaMinima, h.temperaturaMaxima);
+      const $efecto = $t.querySelector(".efecto");
+      $efecto.dataset.estado = efecto;
+      $efecto.textContent = ETIQUETAS[efecto].toLowerCase();
+    }
+
+    function sincronizar(lista) {
+      const ids = new Set(lista.map((h) => h.id));
+
+      // Saco las que se eliminaron desde la app
+      for (const [id, $t] of tarjetas) {
+        if (!ids.has(id)) {
+          $t.remove();
+          tarjetas.delete(id);
+          heladeras.delete(id);
+          pendientes.delete(id);
+        }
+      }
+
+      if (lista.length === 0) {
+        $canales.innerHTML = '<p class="aviso-carga">No hay heladeras. Agregá una desde la app.</p>';
+        return;
+      }
+      $canales.querySelector(".aviso-carga")?.remove();
+
+      lista.forEach((h, indice) => {
+        heladeras.set(h.id, h);
+        if (!tarjetas.has(h.id)) $canales.appendChild(crearTarjeta(h, indice));
+        actualizarTarjeta(h.id);
+      });
+    }
+
+    async function refrescar() {
+      try {
+        const [lista, estadoPush] = await Promise.all([api("/heladeras"), api("/notificaciones/estado")]);
+        push = estadoPush;
+        sincronizar(lista);
+      } catch (e) {
+        push = null;
+        if (tarjetas.size === 0) {
+          $canales.innerHTML = '<p class="aviso-carga">No se pudo conectar con el bridge. Revisá que el backend esté corriendo.</p>';
+        }
+      }
+      pintarPush();
+    }
+
+    /* ---------- Enviar una lectura ---------- */
+    async function enviar(id, temperatura) {
+      const anterior = heladeras.get(id);
+      const $t = tarjetas.get(id);
+      const botones = $t.querySelectorAll("button");
+      botones.forEach((b) => (b.disabled = true));
+
+      try {
+        const nueva = await api(`/heladeras/${id}/temperatura`, {
+          method: "PUT",
+          body: JSON.stringify({ temperatura })
+        });
+        pendientes.delete(id);
+        heladeras.set(id, nueva);
+        actualizarTarjeta(id);
+        $t.classList.remove("destello");
+        void $t.offsetWidth; // reinicia la animación
+        $t.classList.add("destello");
+
+        // Pido el estado de las push actualizado para que el registro diga a cuántos celulares se avisó
+        try { push = await api("/notificaciones/estado"); } catch { /* se ve en el próximo refresco */ }
+        pintarPush();
+        registrar(anterior, nueva);
+      } catch (e) {
+        agregarEvento({
+          tipo: "error",
+          titulo: anterior.nombre,
+          cambio: "",
+          detalle: `No se pudo enviar la lectura: ${e.message}`
+        });
+      } finally {
+        botones.forEach((b) => (b.disabled = false));
+      }
+    }
+
+    // Misma regla que el backend: avisa solo cuando entra en alerta o pierde conexión
+    function registrar(antes, despues) {
+      const estadoAntes = estadoDe(antes.temperaturaActual, antes.temperaturaMinima, antes.temperaturaMaxima);
+      const estadoDespues = estadoDe(despues.temperaturaActual, despues.temperaturaMinima, despues.temperaturaMaxima);
+      const cambio = estadoAntes !== estadoDespues;
+
+      let tipo, detalle;
+      if (estadoDespues === "NORMAL") {
+        tipo = "ok";
+        detalle = cambio ? "Volvió a la normalidad. No se avisa." : "Sigue en rango. No se avisa.";
+      } else if (!cambio) {
+        tipo = "sin-push";
+        detalle = `Ya estaba ${ETIQUETAS[estadoDespues].toLowerCase()}: no se repite la push.`;
+      } else if (!push || !push.activadas) {
+        tipo = "sin-push";
+        detalle = "Hubo que avisar, pero las push están desactivadas en el bridge.";
+      } else if (push.celulares === 0) {
+        tipo = "sin-push";
+        detalle = "Hubo que avisar, pero no hay celulares registrados. Abrí la app en el Home.";
+      } else {
+        tipo = "push";
+        detalle = `Push enviada a ${push.celulares} ${push.celulares === 1 ? "celular" : "celulares"}.`;
+      }
+
+      const lectura = despues.temperaturaActual === null ? "Sin lectura" : `${fmtTemp(despues.temperaturaActual)} °C`;
+      agregarEvento({
+        tipo,
+        titulo: despues.nombre,
+        cambio: `${lectura} · ${ETIQUETAS[estadoAntes]} → ${ETIQUETAS[estadoDespues]}`,
+        detalle
+      });
+    }
+
+    function agregarEvento({ tipo, titulo, cambio, detalle }) {
+      document.getElementById("registro-vacio").hidden = true;
+      const $item = document.createElement("li");
+      $item.className = "evento";
+      $item.dataset.tipo = tipo;
+      const hora = new Date().toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" });
+
+      const $cab = document.createElement("div");
+      $cab.className = "evento__cab";
+      const $titulo = document.createElement("span");
+      $titulo.textContent = titulo;
+      const $hora = document.createElement("span");
+      $hora.className = "evento__hora";
+      $hora.textContent = hora;
+      $cab.append($titulo, $hora);
+      $item.appendChild($cab);
+
+      if (cambio) {
+        const $cambio = document.createElement("p");
+        $cambio.className = "evento__cambio";
+        $cambio.textContent = cambio;
+        $item.appendChild($cambio);
+      }
+
+      const $detalle = document.createElement("p");
+      $detalle.className = "evento__detalle";
+      $detalle.textContent = detalle;
+      $item.appendChild($detalle);
+
+      $eventos.prepend($item);
+      while ($eventos.children.length > MAX_EVENTOS) $eventos.lastElementChild.remove();
+    }
+
+    /* ---------- Arranque ---------- */
+    refrescar();
+    // Se refresca solo, así se ven las heladeras que se agregan o editan desde la app
+    setInterval(() => { if (!document.hidden) refrescar(); }, REFRESCO_MS);
+  </script>
+</body>
+</html>

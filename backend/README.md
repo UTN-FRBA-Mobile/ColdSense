@@ -12,6 +12,12 @@ mvn spring-boot:run
 ```
 Queda escuchando en http://localhost:8080
 
+## Simulador de sensores
+Abrí **http://localhost:8080** en el navegador. Hay un panel por heladera para mandar lecturas como si fueran
+del sensor: mové la aguja (o escribí un valor) y tocá **Enviar lectura**, o usá los botones rápidos
+(**En rango**, **Sobre el máximo**, **Desconectar sensor**). El registro de la derecha muestra qué hizo el bridge
+con cada lectura (si mandó la push o por qué no). Es una página estática en `src/main/resources/static/index.html`.
+
 ## Endpoints
 | Método | Ruta | Descripción |
 |---|---|---|
@@ -25,6 +31,7 @@ Queda escuchando en http://localhost:8080
 | DELETE | /heladeras/{id} | Elimina la heladera y su historial |
 | POST | /dispositivos/busqueda | Busca sensores nuevos (tarda ~3 s y siempre encuentra uno) |
 | POST | /notificaciones/registro | Registra un celular (su `fid` de Firebase) para recibir alertas (push) |
+| GET | /notificaciones/estado | Si las push están activas y cuántos celulares hay registrados |
 
 ## Push notifications (Firebase)
 Cuando una lectura deja una heladera **en alerta** o **sin conexión**, el backend les avisa con

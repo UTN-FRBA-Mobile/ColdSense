@@ -1,5 +1,6 @@
 package com.coldwatch.backend.service;
 
+import com.coldwatch.backend.dto.EstadoNotificaciones;
 import com.coldwatch.backend.model.EstadoHeladera;
 import com.coldwatch.backend.model.Heladera;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -54,6 +55,10 @@ public class NotificacionService {
 
     public void registrarCelular(String fid) {
         fids.add(fid);
+    }
+
+    public EstadoNotificaciones estado() {
+        return new EstadoNotificaciones(firebaseMessaging != null, fids.size());
     }
 
     /**
