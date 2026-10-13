@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    // Lee app/google-services.json (proyecto "coldsense" en Firebase) para las push notifications
+    alias(libs.plugins.google.services)
 }
 
 // local.properties no se sube al repo: cada uno configura ahí lo de su máquina
@@ -78,4 +80,6 @@ dependencies {
     implementation(libs.converter.kotlinx.serialization)
     implementation(libs.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
 }

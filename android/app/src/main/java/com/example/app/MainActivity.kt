@@ -10,32 +10,48 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import cafe.adriel.voyager.navigator.Navigator
 import com.example.app.features.auth.LoginScreen
+import com.example.app.notifications.crearCanalAlertas
 import com.example.app.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
 
-    // Si lo rechaza, las pantallas muestran el error de conexión y se vuelve a pedir al abrir la app
-    private val pedirPermisoRedLocal = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
+    // Si rechaza alguno, se vuelve a pedir al abrir la app
+    private val pedirPermisos = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
     ) { }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Android 17+: el backend corre en la red local (10.0.2.2 desde el emulador o la IP de la PC)
-        // y sin este permiso las conexiones a la red local se bloquean
-        if (savedInstanceState == null &&
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN &&
-            checkSelfPermission(Manifest.permission.ACCESS_LOCAL_NETWORK) != PackageManager.PERMISSION_GRANTED
-        ) {
-            pedirPermisoRedLocal.launch(Manifest.permission.ACCESS_LOCAL_NETWORK)
+        // El canal tiene que existir antes de que llegue la primera alerta
+        crearCanalAlertas(this)
+
+        if (savedInstanceState == null) {
+            val faltantes = permisosNecesarios().filter {
+                checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED
+            }
+            if (faltantes.isNotEmpty()) {
+                pedirPermisos.launch(faltantes.toTypedArray())
+            }
         }
 
         setContent {
             AppTheme {
                 Navigator(LoginScreen())
             }
+        }
+    }
+
+    private fun permisosNecesarios(): List<String> = buildList {
+        // Android 17+: el backend corre en la red local (10.0.2.2 desde el emulador o la IP de la PC)
+        // y sin este permiso las conexiones a la red local se bloquean
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN) {
+            add(Manifest.permission.ACCESS_LOCAL_NETWORK)
+        }
+        // Android 13+: para mostrar las alertas (push notifications)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            add(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 }

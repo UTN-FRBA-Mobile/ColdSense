@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.app.model.Heladera
 import com.example.app.network.ApiClient
 import com.example.app.network.HeladeraService
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,6 +50,16 @@ class HomeViewModel(
                 _isLoading.value = false
             }
         }
+    }
+
+    /**
+     * Registra este celular para recibir las alertas (push notifications). Firebase avisa en
+     * ColdSenseMessagingService.onRegistered y de ahí se manda al backend. Se repite cada vez
+     * que se abre el Home porque el backend guarda los celulares en memoria y los pierde al reiniciarse.
+     */
+    fun registrarParaAlertas() {
+        FirebaseMessaging.getInstance().register()
+            .addOnFailureListener { e -> Log.e("HomeViewModel", "No se pudo registrar en FCM: ${e.message}", e) }
     }
 }
 

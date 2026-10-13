@@ -121,6 +121,7 @@ fun HomeContent(
     // Carga de datos
     LaunchedEffect(Unit) {
         viewModel.loadHeladeras()
+        viewModel.registrarParaAlertas()
     }
 
     Box(
