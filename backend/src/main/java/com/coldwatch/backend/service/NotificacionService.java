@@ -57,6 +57,11 @@ public class NotificacionService {
         fids.add(fid);
     }
 
+    /** El celular cerró sesión: deja de recibir alertas en el momento. */
+    public void darDeBaja(String fid) {
+        fids.remove(fid);
+    }
+
     public EstadoNotificaciones estado() {
         return new EstadoNotificaciones(firebaseMessaging != null, fids.size());
     }

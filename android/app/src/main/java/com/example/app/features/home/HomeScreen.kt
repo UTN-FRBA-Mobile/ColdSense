@@ -80,7 +80,10 @@ class HomeScreen : Screen {
             onAddDevice = { navigator?.push(SearchDeviceScreen()) },
             onHeladeraClick = { id -> navigator?.push(DetailScreen(id)) },
             // Vuelvo al login y borro el historial, así "atrás" no regresa al Home
-            onLogout = { navigator?.replaceAll(LoginScreen()) },
+            onLogout = {
+                viewModel.cerrarSesion()
+                navigator?.replaceAll(LoginScreen())
+            },
             onNavigate = { destination ->
                 when (destination) {
                     BottomNavDestination.Home -> Unit

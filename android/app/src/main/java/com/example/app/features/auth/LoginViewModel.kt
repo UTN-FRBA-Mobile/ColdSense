@@ -6,6 +6,7 @@ import com.example.app.data.auth.AuthResult
 import com.example.app.data.auth.AuthService
 import com.example.app.data.auth.LoginRequest
 import com.example.app.data.auth.MockAuthService
+import com.example.app.data.auth.SesionStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,6 +57,11 @@ class LoginViewModel(
                 )
             } catch (exception: Exception) {
                 AuthResult.Failure("No se pudo contactar al servicio")
+            }
+
+            // Guardo la sesión para que la próxima vez la app abra directo en el Home
+            if (result == AuthResult.Success) {
+                SesionStorage.guardar(normalizedEmail)
             }
 
             _uiState.update {

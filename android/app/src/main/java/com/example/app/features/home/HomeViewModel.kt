@@ -3,9 +3,12 @@ package com.example.app.features.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.app.data.auth.SesionStorage
 import com.example.app.model.Heladera
 import com.example.app.network.ApiClient
 import com.example.app.network.HeladeraService
+import com.example.app.network.NotificacionService
+import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -14,7 +17,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val heladeraService: HeladeraService = ApiClient.heladeraService
+    private val heladeraService: HeladeraService = ApiClient.heladeraService,
+    private val notificacionService: NotificacionService = ApiClient.notificacionService
 ): ViewModel() {
 
     // Lista de heladeras
@@ -60,6 +64,23 @@ class HomeViewModel(
     fun registrarParaAlertas() {
         FirebaseMessaging.getInstance().register()
             .addOnFailureListener { e -> Log.e("HomeViewModel", "No se pudo registrar en FCM: ${e.message}", e) }
+    }
+
+    /**
+     * Borra la sesión guardada y le pide al backend que no le mande más alertas a este
+     * celular (al volver a iniciar sesión, el Home lo registra de nuevo).
+     */
+    fun cerrarSesion() {
+        SesionStorage.cerrar()
+        FirebaseInstallations.getInstance().id.addOnSuccessListener { fid ->
+            viewModelScope.launch {
+                try {
+                    notificacionService.darDeBaja(fid)
+                } catch (e: Exception) {
+                    Log.e("HomeViewModel", "No se pudo dar de baja el celular en el backend: ${e.message}", e)
+                }
+            }
+        }
     }
 }
 

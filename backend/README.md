@@ -31,6 +31,7 @@ con cada lectura (si mandó la push o por qué no). Es una página estática en 
 | DELETE | /heladeras/{id} | Elimina la heladera y su historial |
 | POST | /dispositivos/busqueda | Busca sensores nuevos (tarda ~3 s y siempre encuentra uno) |
 | POST | /notificaciones/registro | Registra un celular (su `fid` de Firebase) para recibir alertas (push) |
+| DELETE | /notificaciones/registro/{fid} | Da de baja un celular (la app lo llama al cerrar sesión) |
 | GET | /notificaciones/estado | Si las push están activas y cuántos celulares hay registrados |
 
 ## Push notifications (Firebase)

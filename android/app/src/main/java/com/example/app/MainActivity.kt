@@ -9,7 +9,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import cafe.adriel.voyager.navigator.Navigator
+import com.example.app.data.auth.SesionStorage
 import com.example.app.features.auth.LoginScreen
+import com.example.app.features.home.HomeScreen
 import com.example.app.notifications.crearCanalAlertas
 import com.example.app.ui.theme.AppTheme
 
@@ -36,9 +38,13 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        // Si ya inició sesión antes (y no la cerró), arranca directo en el Home
+        SesionStorage.init(this)
+        val primeraPantalla = if (SesionStorage.haySesion) HomeScreen() else LoginScreen()
+
         setContent {
             AppTheme {
-                Navigator(LoginScreen())
+                Navigator(primeraPantalla)
             }
         }
     }
