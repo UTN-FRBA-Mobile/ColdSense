@@ -29,7 +29,7 @@ import java.util.List;
  *   POST   /heladeras                          -> crea una heladera (201). Con "numeroSerie" vincula un sensor encontrado
  *   PUT    /heladeras/{id}                     -> modifica nombre / límites / intervalo
  *   PUT    /heladeras/{id}/parametros          -> modifica límites e intervalo (pantalla Editar parámetros)
- *   PUT    /heladeras/{id}/temperatura         -> simula una lectura del sensor
+ *   PUT    /heladeras/{id}/temperatura         -> simula una lectura del sensor (push si entra en alerta o pierde conexión)
  *   DELETE /heladeras/{id}                     -> elimina la heladera y su historial (204)
  */
 @RestController

@@ -22,12 +22,14 @@ public class HeladeraService {
     private final HeladeraRepository heladeraRepository;
     private final LecturaRepository lecturaRepository;
     private final DispositivoService dispositivoService;
+    private final NotificacionService notificacionService;
 
     public HeladeraService(HeladeraRepository heladeraRepository, LecturaRepository lecturaRepository,
-                           DispositivoService dispositivoService) {
+                           DispositivoService dispositivoService, NotificacionService notificacionService) {
         this.heladeraRepository = heladeraRepository;
         this.lecturaRepository = lecturaRepository;
         this.dispositivoService = dispositivoService;
+        this.notificacionService = notificacionService;
     }
 
     public List<Heladera> listar() {
@@ -108,14 +110,19 @@ public class HeladeraService {
      */
     public Heladera registrarLectura(Long id, Double temperatura) {
         Heladera actual = obtener(id);
+        Heladera nueva;
 
         if (temperatura == null) {
-            return heladeraRepository.save(actual.conLectura(null, actual.ultimaLectura()));
+            nueva = heladeraRepository.save(actual.conLectura(null, actual.ultimaLectura()));
+        } else {
+            long ahora = System.currentTimeMillis();
+            lecturaRepository.agregar(id, new Lectura(ahora, temperatura));
+            nueva = heladeraRepository.save(actual.conLectura(temperatura, ahora));
         }
 
-        long ahora = System.currentTimeMillis();
-        lecturaRepository.agregar(id, new Lectura(ahora, temperatura));
-        return heladeraRepository.save(actual.conLectura(temperatura, ahora));
+        // Push si entró en alerta o perdió conexión
+        notificacionService.notificarCambioDeEstado(actual.estado(), nueva);
+        return nueva;
     }
 
     public void eliminar(Long id) {

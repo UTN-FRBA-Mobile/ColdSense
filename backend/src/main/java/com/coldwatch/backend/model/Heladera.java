@@ -39,4 +39,14 @@ public record Heladera(
         return new Heladera(id, nuevoNombre, temperaturaActual, minima,
                 maxima, bateria, ultimaLectura, intervalo);
     }
+
+    /** Misma regla que calcularEstado() en la app Android. */
+    public EstadoHeladera estado() {
+        if (temperaturaActual == null) {
+            return EstadoHeladera.SIN_CONEXION;
+        }
+        return temperaturaActual < temperaturaMinima || temperaturaActual > temperaturaMaxima
+                ? EstadoHeladera.ALERTA
+                : EstadoHeladera.NORMAL;
+    }
 }
