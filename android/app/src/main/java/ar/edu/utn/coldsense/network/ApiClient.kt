@@ -1,11 +1,15 @@
 package ar.edu.utn.coldsense.network
 
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 /**
  * Cliente único de red de la aplicación. Configura Retrofit una sola
@@ -21,13 +25,37 @@ object ApiClient {
     // Ignora campos que lleguen del servidor y no estén en los DTO
     private val json = Json { ignoreUnknownKeys = true }
 
-    // Muestra en el Logcat cada request y response (útil mientras desarrollás)
-    private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(
-            HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
+    // El token de Firebase se adjunta en cada llamada autenticada al backend.
+    private val firebaseAuthInterceptor = okhttp3.Interceptor { chain ->
+        val user = FirebaseAuth.getInstance().currentUser
+        val request = if (user == null) {
+            chain.request()
+        } else {
+            val token = try {
+                Tasks.await(user.getIdToken(false), 15, TimeUnit.SECONDS).token
+            } catch (exception: Exception) {
+                throw IOException("No se pudo obtener el token de Firebase.", exception)
             }
-        )
+
+            if (token.isNullOrBlank()) {
+                throw IOException("Firebase no devolvió un ID token válido.")
+            }
+
+            chain.request().newBuilder()
+                .header("Authorization", "Bearer $token")
+                .build()
+        }
+
+        chain.proceed(request)
+    }
+
+    // No registrar el token Bearer en Logcat.
+    private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(firebaseAuthInterceptor)
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            redactHeader("Authorization")
+            level = HttpLoggingInterceptor.Level.BODY
+        })
         .build()
 
     private val retrofit = Retrofit.Builder()
