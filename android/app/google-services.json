@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1050318764260",
+    "project_id": "coldsense-159a5",
+    "storage_bucket": "coldsense-159a5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1050318764260:android:4d433b8d9f61c3ea9cd4f1",
+        "android_client_info": {
+          "package_name": "ar.edu.utn.coldsense"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1050318764260-ljeths5bsb1nnlpqld6mkqg96kcbe668.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAeRnBr8jXq0bL6EQKL2XmrhkXd7awU6_U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1050318764260-ljeths5bsb1nnlpqld6mkqg96kcbe668.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

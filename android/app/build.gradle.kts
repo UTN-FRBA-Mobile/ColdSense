@@ -4,8 +4,14 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+// Firebase project setup is optional while developing. The plugin activates
+// automatically after google-services.json is added to this module.
+if (file("google-services.json").isFile) {
+    pluginManager.apply("com.google.gms.google-services")
+}
+
 android {
-    namespace = "com.example.app"
+    namespace = "ar.edu.utn.coldsense"
     compileSdk {
         version = release(37) {
             minorApiLevel = 1
@@ -13,7 +19,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.app"
+        applicationId = "ar.edu.utn.coldsense"
         minSdk = 26
         targetSdk = 37
         versionCode = 1
@@ -42,6 +48,11 @@ android {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.credentials.core)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.google.id)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
