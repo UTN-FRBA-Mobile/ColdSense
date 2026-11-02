@@ -30,6 +30,10 @@ del sensor: mové la aguja (o escribí un valor) y tocá **Enviar lectura**, o u
 (**En rango**, **Sobre el máximo**, **Desconectar sensor**). El registro de la derecha muestra qué hizo el bridge
 con cada lectura (si mandó la push o por qué no). Es una página estática en `src/main/resources/static/index.html`.
 
+El simulador no tiene login: las llamadas **sin** `Authorization` que vienen de la misma PC (`localhost`) se aceptan
+sin token. Si mandan un token se verifica igual, y desde otra máquina (un celular en la red) o detrás de un proxy
+el token sigue siendo obligatorio. Por eso hay que abrirlo como `localhost`, no con la IP de la PC.
+
 ## Endpoints
 | Método | Ruta | Descripción |
 |---|---|---|
