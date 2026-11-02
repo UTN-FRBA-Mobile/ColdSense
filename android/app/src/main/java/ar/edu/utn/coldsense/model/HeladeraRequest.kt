@@ -11,5 +11,7 @@ data class HeladeraRequest(
     val nombre: String,
     val temperaturaMinima: Double,
     val temperaturaMaxima: Double,
-    val intervaloLecturaMinutos: Int
+    val intervaloLecturaMinutos: Int,
+    // Sensor encontrado en la búsqueda que se vincula a esta heladera
+    val numeroSerie: String? = null
 )

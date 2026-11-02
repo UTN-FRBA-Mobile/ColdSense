@@ -50,8 +50,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import ar.edu.utn.coldsense.features.auth.LoginScreen
 import ar.edu.utn.coldsense.data.auth.FirebaseAuthService
-import ar.edu.utn.coldsense.features.device.add.AddDeviceScreen
 import ar.edu.utn.coldsense.features.device.detail.DetailScreen
+import ar.edu.utn.coldsense.features.device.search.SearchDeviceScreen
 import ar.edu.utn.coldsense.model.Heladera
 import ar.edu.utn.coldsense.model.HeladeraStatus
 import ar.edu.utn.coldsense.model.calcularEstado
@@ -84,7 +84,7 @@ class HomeScreen : Screen {
 
         HomeContent(
             viewModel = viewModel,
-            onAddDevice = { navigator?.push(AddDeviceScreen()) },
+            onAddDevice = { navigator?.push(SearchDeviceScreen()) },
             onHeladeraClick = { id -> navigator?.push(DetailScreen(id)) },
             // Vuelvo al login y borro el historial, así "atrás" no regresa al Home
             onLogout = {

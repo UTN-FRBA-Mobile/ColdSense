@@ -1,5 +1,6 @@
 package ar.edu.utn.coldsense.network
 
+import ar.edu.utn.coldsense.BuildConfig
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.serialization.json.Json
@@ -17,10 +18,8 @@ import java.util.concurrent.TimeUnit
  */
 object ApiClient {
 
-    // Emulador: 10.0.2.2 apunta al localhost de tu PC.
-// Celular físico: usar la IP de tu PC en la red (ej: http://192.168.0.10:8080/).
-// La URL base debe terminar con "/".
-    private const val BASE_URL = "http://192.168.1.40:8080/"
+    // Se configura en local.properties (api.baseUrl); por defecto apunta al backend local del emulador.
+    private const val BASE_URL = BuildConfig.API_BASE_URL
 
     // Ignora campos que lleguen del servidor y no estén en los DTO
     private val json = Json { ignoreUnknownKeys = true }
@@ -65,4 +64,5 @@ object ApiClient {
         .build()
 
     val heladeraService: HeladeraService = retrofit.create(HeladeraService::class.java)
+    val dispositivoService: DispositivoService = retrofit.create(DispositivoService::class.java)
 }
