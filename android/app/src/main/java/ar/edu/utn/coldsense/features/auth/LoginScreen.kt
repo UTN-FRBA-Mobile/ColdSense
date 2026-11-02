@@ -38,7 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import ar.edu.utn.coldsense.data.auth.FirebaseAuthService
 import ar.edu.utn.coldsense.features.home.HomeScreen
@@ -214,10 +214,9 @@ private suspend fun requestGoogleIdToken(
         )
     }
 
-    val googleIdOption = GetGoogleIdOption.Builder()
-        .setServerClientId(context.getString(clientIdResource))
-        .setFilterByAuthorizedAccounts(false)
-        .setAutoSelectEnabled(false)
+    // Flujo del botón "Continuar con Google": muestra el selector de cuentas
+    // y, si el celular no tiene ninguna, ofrece agregar una
+    val googleIdOption = GetSignInWithGoogleOption.Builder(context.getString(clientIdResource))
         .build()
     val request = GetCredentialRequest.Builder()
         .addCredentialOption(googleIdOption)
