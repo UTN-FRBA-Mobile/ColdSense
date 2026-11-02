@@ -16,7 +16,8 @@ import java.util.Random;
 @Component
 public class DatosIniciales implements CommandLineRunner {
 
-    private static final int LECTURAS_POR_HELADERA = 24;
+    // 30 días de lecturas cada 10 minutos, para poder ver el gráfico de "1 mes"
+    private static final int LECTURAS_POR_HELADERA = 30 * 24 * 6;
     private static final long UN_MINUTO = 60_000L;
 
     private final HeladeraRepository heladeraRepository;

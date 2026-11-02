@@ -26,6 +26,7 @@ import java.util.List;
  *   GET    /heladeras                          -> lista todas
  *   GET    /heladeras/{id}                     -> una heladera
  *   GET    /heladeras/{id}/lecturas?limit=5    -> últimas lecturas (más nueva primero)
+ *   GET    /heladeras/{id}/lecturas?desde=ms   -> lecturas desde esa fecha (más nueva primero, para el gráfico)
  *   POST   /heladeras                          -> crea una heladera (201). Con "numeroSerie" vincula un sensor encontrado
  *   PUT    /heladeras/{id}                     -> modifica nombre / límites / intervalo
  *   PUT    /heladeras/{id}/parametros          -> modifica límites e intervalo (pantalla Editar parámetros)
@@ -54,7 +55,11 @@ public class HeladeraController {
 
     @GetMapping("/{id}/lecturas")
     public List<Lectura> lecturas(@PathVariable Long id,
-                                  @RequestParam(defaultValue = "10") int limit) {
+                                  @RequestParam(defaultValue = "10") int limit,
+                                  @RequestParam(required = false) Long desde) {
+        if (desde != null) {
+            return service.lecturasDesde(id, desde);
+        }
         return service.ultimasLecturas(id, limit);
     }
 
