@@ -23,6 +23,10 @@ interface HeladeraService {
     @GET("heladeras/{id}/lecturas")
     suspend fun getLecturas(@Path("id") id: Long, @Query("limit") limit: Int): List<Lectura>
 
+    /** Lecturas con fecha >= desde (epoch en ms), más nueva primero. */
+    @GET("heladeras/{id}/lecturas")
+    suspend fun getLecturasDesde(@Path("id") id: Long, @Query("desde") desde: Long): List<Lectura>
+
     @POST("heladeras")
     suspend fun crearHeladera(@Body request: HeladeraRequest): Heladera
 

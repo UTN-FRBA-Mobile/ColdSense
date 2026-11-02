@@ -7,6 +7,8 @@ import com.example.app.model.Heladera
 import com.example.app.model.Lectura
 import com.example.app.network.ApiClient
 import com.example.app.network.HeladeraService
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +34,11 @@ class DetailViewModel(
     // Mensaje de error (null = sin error)
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage = _errorMessage.asStateFlow()
+
+    // Gráfico de temperatura del período elegido
+    private val _grafico = MutableStateFlow(GraficoUiState())
+    val grafico = _grafico.asStateFlow()
+    private var graficoJob: Job? = null
 
     // Diálogo de eliminar
     private val _showDeleteDialog = MutableStateFlow(false)
@@ -70,6 +77,52 @@ class DetailViewModel(
             } finally {
                 _isLoading.value = false
             }
+        }
+    }
+
+    /**
+     * Carga las lecturas del período para el gráfico. Si se cambia de período
+     * mientras carga, cancelo el pedido anterior.
+     */
+    fun loadGrafico(heladeraId: Long, periodo: PeriodoGrafico = _grafico.value.periodo) {
+        graficoJob?.cancel()
+
+        val hasta = System.currentTimeMillis()
+        val desde = hasta - periodo.duracionMillis
+        _grafico.value = _grafico.value.copy(
+            periodo = periodo,
+            desde = desde,
+            hasta = hasta,
+            isLoading = true,
+            hasError = false
+        )
+
+        graficoJob = viewModelScope.launch {
+            try {
+                val lecturas = heladeraService.getLecturasDesde(heladeraId, desde)
+                _grafico.value = _grafico.value.copy(
+                    lecturas = lecturas.sortedBy { it.fecha },
+                    isLoading = false
+                )
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _grafico.value = _grafico.value.copy(
+                    lecturas = emptyList(),
+                    isLoading = false,
+                    hasError = true
+                )
+                Log.e(TAG, "Error al cargar el gráfico: ${e.message}", e)
+            }
+        }
+    }
+
+    /** Activa o desactiva una línea del gráfico. Siempre queda al menos una activa. */
+    fun onSerieClick(serie: SerieGrafico) {
+        val actuales = _grafico.value.series
+        val nuevas = if (serie in actuales) actuales - serie else actuales + serie
+        if (nuevas.isNotEmpty()) {
+            _grafico.value = _grafico.value.copy(series = nuevas)
         }
     }
 

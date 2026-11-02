@@ -38,6 +38,21 @@ public class LecturaRepository {
         }
     }
 
+    /**
+     * Devuelve las lecturas con fecha >= desde, de la más nueva a la más vieja.
+     */
+    public List<Lectura> desde(Long heladeraId, long desde, int limite) {
+        List<Lectura> lecturas = lecturasPorHeladera.getOrDefault(heladeraId, List.of());
+
+        synchronized (lecturas) {
+            return lecturas.stream()
+                    .filter(lectura -> lectura.fecha() >= desde)
+                    .sorted(Comparator.comparingLong(Lectura::fecha).reversed())
+                    .limit(limite)
+                    .toList();
+        }
+    }
+
     public void eliminarTodas(Long heladeraId) {
         lecturasPorHeladera.remove(heladeraId);
     }

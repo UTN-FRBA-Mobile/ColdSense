@@ -18,6 +18,7 @@ public class HeladeraService {
     private static final int INTERVALO_DEFAULT = 10;
     private static final int BATERIA_INICIAL = 100;
     private static final int MAX_LECTURAS = 100;
+    private static final int MAX_LECTURAS_PERIODO = 10_000;
 
     private final HeladeraRepository heladeraRepository;
     private final LecturaRepository lecturaRepository;
@@ -43,6 +44,14 @@ public class HeladeraService {
         obtener(id); // tira 404 si no existe
         int limiteSeguro = Math.max(1, Math.min(limite, MAX_LECTURAS));
         return lecturaRepository.ultimas(id, limiteSeguro);
+    }
+
+    /**
+     * Lecturas de un período (para el gráfico). Un mes con lecturas cada 10 min son ~4300.
+     */
+    public List<Lectura> lecturasDesde(Long id, long desde) {
+        obtener(id); // tira 404 si no existe
+        return lecturaRepository.desde(id, desde, MAX_LECTURAS_PERIODO);
     }
 
     public Heladera crear(HeladeraRequest request) {

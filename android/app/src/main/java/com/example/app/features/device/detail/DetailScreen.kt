@@ -119,6 +119,7 @@ fun DeviceDetailContent(
     // Estados
     val heladera by viewModel.heladera.collectAsState()
     val lecturas by viewModel.lecturas.collectAsState()
+    val grafico by viewModel.grafico.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
     val showDeleteDialog by viewModel.showDeleteDialog.collectAsState()
     val isDeleting by viewModel.isDeleting.collectAsState()
@@ -127,6 +128,7 @@ fun DeviceDetailContent(
     // Carga de datos (se repite al volver a esta pantalla, así se refresca)
     LaunchedEffect(heladeraId) {
         viewModel.loadDetalle(heladeraId)
+        viewModel.loadGrafico(heladeraId)
     }
 
     // Cuando se elimina, vuelvo al Home
@@ -154,6 +156,10 @@ fun DeviceDetailContent(
                 DetailBody(
                     heladera = heladeraActual,
                     lecturas = lecturas,
+                    grafico = grafico,
+                    onPeriodoClick = { periodo -> viewModel.loadGrafico(heladeraId, periodo) },
+                    onSerieClick = viewModel::onSerieClick,
+                    onReintentarGrafico = { viewModel.loadGrafico(heladeraId) },
                     onVerTodas = onVerTodas,
                     onDeleteClick = viewModel::onDeleteClick,
                     modifier = Modifier.weight(1f)
@@ -251,6 +257,10 @@ private fun DetailHeader(
 private fun DetailBody(
     heladera: Heladera,
     lecturas: List<Lectura>,
+    grafico: GraficoUiState,
+    onPeriodoClick: (PeriodoGrafico) -> Unit,
+    onSerieClick: (SerieGrafico) -> Unit,
+    onReintentarGrafico: () -> Unit,
     onVerTodas: () -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -291,6 +301,16 @@ private fun DetailBody(
                     .fillMaxHeight()
             )
         }
+
+        GraficoSection(
+            state = grafico,
+            temperaturaMinima = heladera.temperaturaMinima,
+            temperaturaMaxima = heladera.temperaturaMaxima,
+            intervaloLecturaMinutos = heladera.intervaloLecturaMinutos,
+            onPeriodoClick = onPeriodoClick,
+            onSerieClick = onSerieClick,
+            onReintentar = onReintentarGrafico
+        )
 
         LecturasSection(lecturas = lecturas, onVerTodas = onVerTodas)
 
