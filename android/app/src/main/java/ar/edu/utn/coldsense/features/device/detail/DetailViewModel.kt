@@ -57,7 +57,12 @@ class DetailViewModel(
         if (_isLoading.value)
             return
         _isLoading.value = true
-        _errorMessage.value = null
+
+        // Solo limpio el error si es el de la carga inicial; uno de otra acción
+        // (ej: no se pudo eliminar) queda hasta que lo cierren
+        val primeraCarga = _heladera.value == null
+        if (primeraCarga)
+            _errorMessage.value = null
 
         viewModelScope.launch {
             try {
@@ -72,7 +77,9 @@ class DetailViewModel(
                 }
 
             } catch (e: Exception) {
-                _errorMessage.value = "No se pudo cargar el detalle de la heladera. Revisá tu conexión e intentá de nuevo."
+                // Si falla un refresco sigo mostrando lo último que se cargó
+                if (primeraCarga)
+                    _errorMessage.value = "No se pudo cargar el detalle de la heladera. Revisá tu conexión e intentá de nuevo."
                 Log.e(TAG, "Error al cargar el detalle: ${e.message}", e)
             } finally {
                 _isLoading.value = false
@@ -83,35 +90,53 @@ class DetailViewModel(
     /**
      * Carga las lecturas del período para el gráfico. Si se cambia de período
      * mientras carga, cancelo el pedido anterior.
+     *
+     * @param mostrarCarga false para los refrescos automáticos: el gráfico sigue mostrando
+     * lo anterior mientras carga y, si falla, no muestra el error.
      */
-    fun loadGrafico(heladeraId: Long, periodo: PeriodoGrafico = _grafico.value.periodo) {
+    fun loadGrafico(
+        heladeraId: Long,
+        periodo: PeriodoGrafico = _grafico.value.periodo,
+        mostrarCarga: Boolean = true
+    ) {
+        // Un refresco automático no pisa una carga que el usuario está esperando (ej: cambió de período)
+        if (!mostrarCarga && _grafico.value.isLoading)
+            return
         graficoJob?.cancel()
 
         val hasta = System.currentTimeMillis()
         val desde = hasta - periodo.duracionMillis
-        _grafico.value = _grafico.value.copy(
-            periodo = periodo,
-            desde = desde,
-            hasta = hasta,
-            isLoading = true,
-            hasError = false
-        )
+        if (mostrarCarga) {
+            _grafico.value = _grafico.value.copy(
+                periodo = periodo,
+                desde = desde,
+                hasta = hasta,
+                isLoading = true,
+                hasError = false
+            )
+        }
 
         graficoJob = viewModelScope.launch {
             try {
                 val lecturas = heladeraService.getLecturasDesde(heladeraId, desde)
                 _grafico.value = _grafico.value.copy(
+                    periodo = periodo,
+                    desde = desde,
+                    hasta = hasta,
                     lecturas = lecturas.sortedBy { it.fecha },
-                    isLoading = false
+                    isLoading = false,
+                    hasError = false
                 )
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                _grafico.value = _grafico.value.copy(
-                    lecturas = emptyList(),
-                    isLoading = false,
-                    hasError = true
-                )
+                if (mostrarCarga) {
+                    _grafico.value = _grafico.value.copy(
+                        lecturas = emptyList(),
+                        isLoading = false,
+                        hasError = true
+                    )
+                }
                 Log.e(TAG, "Error al cargar el gráfico: ${e.message}", e)
             }
         }

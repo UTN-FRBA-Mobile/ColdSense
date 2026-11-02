@@ -55,12 +55,14 @@ import ar.edu.utn.coldsense.features.device.search.SearchDeviceScreen
 import ar.edu.utn.coldsense.model.Heladera
 import ar.edu.utn.coldsense.model.HeladeraStatus
 import ar.edu.utn.coldsense.model.calcularEstado
+import ar.edu.utn.coldsense.notifications.CambiosHeladeras
 import ar.edu.utn.coldsense.ui.components.BottomNavDestination
 import ar.edu.utn.coldsense.ui.components.CommonHeader
 import ar.edu.utn.coldsense.ui.components.ConfirmDeleteDialog
 import ar.edu.utn.coldsense.ui.components.ErrorMessage
 import ar.edu.utn.coldsense.ui.components.NavigationBar
 import ar.edu.utn.coldsense.ui.components.NextButton
+import ar.edu.utn.coldsense.ui.components.RefrescoPeriodico
 import ar.edu.utn.coldsense.ui.components.Spinner
 import ar.edu.utn.coldsense.utils.formatTemperature
 import kotlinx.coroutines.launch
@@ -131,10 +133,19 @@ fun HomeContent(
     // Diálogo de cerrar sesión
     var showLogoutDialog by remember { mutableStateOf(false) }
 
-    // Carga de datos
+    // Registro el celular para recibir las alertas
     LaunchedEffect(Unit) {
-        viewModel.loadHeladeras()
         viewModel.registrarParaAlertas()
+    }
+
+    // Carga de datos: al entrar y cada 3 segundos mientras se ve (también al volver a la app)
+    RefrescoPeriodico {
+        viewModel.loadHeladeras()
+    }
+
+    // Si llega una alerta con la app abierta, actualizo la lista
+    LaunchedEffect(Unit) {
+        CambiosHeladeras.cambios.collect { viewModel.loadHeladeras() }
     }
 
     Box(

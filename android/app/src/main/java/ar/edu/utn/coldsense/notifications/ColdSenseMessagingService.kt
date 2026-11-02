@@ -37,13 +37,18 @@ class ColdSenseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
+        val heladeraId = message.data["heladeraId"]?.toLongOrNull()
+
+        // La heladera cambió de estado: si hay una pantalla abierta, que se actualice
+        CambiosHeladeras.avisar(heladeraId)
+
         val notificacion = message.notification ?: return
 
         mostrarAlerta(
             context = this,
             titulo = notificacion.title.orEmpty(),
             texto = notificacion.body.orEmpty(),
-            heladeraId = message.data["heladeraId"]?.toLongOrNull()
+            heladeraId = heladeraId
         )
     }
 

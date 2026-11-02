@@ -40,6 +40,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,8 +61,10 @@ import ar.edu.utn.coldsense.model.Heladera
 import ar.edu.utn.coldsense.model.HeladeraStatus
 import ar.edu.utn.coldsense.model.Lectura
 import ar.edu.utn.coldsense.model.calcularEstado
+import ar.edu.utn.coldsense.notifications.CambiosHeladeras
 import ar.edu.utn.coldsense.ui.components.ConfirmDeleteDialog
 import ar.edu.utn.coldsense.ui.components.ErrorMessage
+import ar.edu.utn.coldsense.ui.components.RefrescoPeriodico
 import ar.edu.utn.coldsense.ui.components.Spinner
 import ar.edu.utn.coldsense.utils.formatHora
 import ar.edu.utn.coldsense.utils.formatLimite
@@ -125,10 +130,23 @@ fun DeviceDetailContent(
     val isDeleting by viewModel.isDeleting.collectAsState()
     val isDeleted by viewModel.isDeleted.collectAsState()
 
-    // Carga de datos (se repite al volver a esta pantalla, así se refresca)
-    LaunchedEffect(heladeraId) {
+    // Carga de datos: al entrar y cada 3 segundos mientras se ve (también al volver a la app).
+    // El gráfico se refresca sin mostrar el spinner, así no parpadea
+    var primeraCarga by remember(heladeraId) { mutableStateOf(true) }
+    RefrescoPeriodico {
         viewModel.loadDetalle(heladeraId)
-        viewModel.loadGrafico(heladeraId)
+        viewModel.loadGrafico(heladeraId, mostrarCarga = primeraCarga)
+        primeraCarga = false
+    }
+
+    // Si llega una alerta de esta heladera con la app abierta, la actualizo en el momento
+    LaunchedEffect(heladeraId) {
+        CambiosHeladeras.cambios.collect { id ->
+            if (id == null || id == heladeraId) {
+                viewModel.loadDetalle(heladeraId)
+                viewModel.loadGrafico(heladeraId, mostrarCarga = false)
+            }
+        }
     }
 
     // Cuando se elimina, vuelvo al Home

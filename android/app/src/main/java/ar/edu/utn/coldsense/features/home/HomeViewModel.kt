@@ -34,25 +34,36 @@ class HomeViewModel(
     private val _isError = MutableStateFlow(false)
     val isError = _isError.asStateFlow()
 
+    // Evita pedir la lista dos veces al mismo tiempo (ej: al volver a la app y por una alerta)
+    @Volatile
+    private var cargando = false
+
+    /**
+     * Pide las heladeras. Se llama cada 3 segundos mientras se ve el Home y cuando llega una alerta.
+     * El spinner se muestra solo si todavía no hay nada; si no, la lista se actualiza sin taparla.
+     */
     fun loadHeladeras() {
 
-        // Actualizo el estado de carga para evitar múltiples solicitudes simultáneas
-        if (isLoading.value)
+        // Evito múltiples solicitudes simultáneas
+        if (cargando)
             return
-        _isLoading.value = true
-        _isError.value = false
+        cargando = true
+        _isLoading.value = _heladeras.value.isEmpty()
 
         viewModelScope.launch(Dispatchers.IO) {
 
             try {
                 val response = heladeraService.getHeladeras()
                 _heladeras.value = response
+                // El error se va solo cuando vuelve a responder (así no parpadea en cada intento)
+                _isError.value = false
 
             } catch (e: Exception) {
                 _isError.value = true
                 Log.e("HomeViewModel", "Error al cargar los datos de heladeras: ${e.message}")
             } finally {
                 _isLoading.value = false
+                cargando = false
             }
         }
     }
