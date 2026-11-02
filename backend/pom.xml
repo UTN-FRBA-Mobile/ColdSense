@@ -28,6 +28,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- Verifica en el servidor los ID tokens emitidos por Firebase Authentication. -->
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>9.11.0</version>
+        </dependency>
+
         <!-- Validaciones de los request (@NotBlank, @NotNull, etc.) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

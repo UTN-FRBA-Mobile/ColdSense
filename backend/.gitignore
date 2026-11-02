@@ -3,3 +3,5 @@ target/
 *.iml
 .vscode/
 .DS_Store
+serviceAccountKey.json
+firebase-service-account*.json
