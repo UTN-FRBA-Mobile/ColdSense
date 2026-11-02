@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import com.example.app.features.device.DispositivoEncontradoCard
+import com.example.app.model.DispositivoEncontrado
 import com.example.app.ui.components.ErrorMessage
 import com.example.app.ui.components.FormField
 import com.example.app.ui.components.NextButton
@@ -49,7 +51,9 @@ private val DangerRed = Color(0xFFEF4444)
  * ADD DEVICE SCREEN
  * ================================================================
  */
-class AddDeviceScreen : Screen {
+class AddDeviceScreen(
+    private val dispositivo: DispositivoEncontrado
+) : Screen {
 
     private val viewModel = AddDeviceViewModel()
 
@@ -59,10 +63,11 @@ class AddDeviceScreen : Screen {
         val navigator = LocalNavigator.current
 
         AddDeviceContent(
+            dispositivo = dispositivo,
             viewModel = viewModel,
             onBack = { navigator?.pop() },
-            // Al volver, el Home recarga la lista y aparece la heladera nueva
-            onCreated = { navigator?.pop() }
+            // Vuelvo al Home salteando la búsqueda. El Home recarga la lista y aparece la heladera nueva
+            onCreated = { navigator?.popUntilRoot() }
         )
     }
 }
@@ -74,6 +79,7 @@ class AddDeviceScreen : Screen {
  */
 @Composable
 fun AddDeviceContent(
+    dispositivo: DispositivoEncontrado,
     viewModel: AddDeviceViewModel,
     onBack: () -> Unit,
     onCreated: () -> Unit
@@ -116,8 +122,11 @@ fun AddDeviceContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
+                // Sensor que se va a vincular
+                DispositivoEncontradoCard(dispositivo = dispositivo)
+
                 Text(
-                    text = "Completá los datos de la heladera que querés monitorear.",
+                    text = "Ponele un nombre y configurá los límites de la heladera donde instalaste el sensor.",
                     fontSize = 14.sp,
                     color = TextSecondary
                 )
@@ -174,7 +183,7 @@ fun AddDeviceContent(
                     .padding(horizontal = 20.dp, vertical = 12.dp)
             ) {
                 NextButton(
-                    onClick = viewModel::guardar,
+                    onClick = { viewModel.guardar(dispositivo.numeroSerie) },
                     enabled = !isSaving,
                     text = "Guardar dispositivo",
                     isLoading = isSaving
@@ -216,7 +225,7 @@ private fun AddDeviceHeader(onBack: () -> Unit) {
         }
 
         Text(
-            text = "Agregar dispositivo",
+            text = "Configurar dispositivo",
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             fontSize = 17.sp,

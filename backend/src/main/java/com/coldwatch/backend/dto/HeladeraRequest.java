@@ -25,7 +25,11 @@ public record HeladeraRequest(
 
         // Opcional: si no viene, se usan 10 minutos
         @Min(value = 1, message = "El intervalo debe ser de al menos 1 minuto")
-        Integer intervaloLecturaMinutos
+        Integer intervaloLecturaMinutos,
+
+        // Opcional, solo al crear: sensor encontrado en POST /dispositivos/busqueda que se vincula
+        // a la heladera. Si viene, la heladera arranca con la temperatura que mide el sensor.
+        String numeroSerie
 ) {
 
     @JsonIgnore

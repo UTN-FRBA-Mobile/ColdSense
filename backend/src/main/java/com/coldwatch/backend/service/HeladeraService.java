@@ -21,10 +21,13 @@ public class HeladeraService {
 
     private final HeladeraRepository heladeraRepository;
     private final LecturaRepository lecturaRepository;
+    private final DispositivoService dispositivoService;
 
-    public HeladeraService(HeladeraRepository heladeraRepository, LecturaRepository lecturaRepository) {
+    public HeladeraService(HeladeraRepository heladeraRepository, LecturaRepository lecturaRepository,
+                           DispositivoService dispositivoService) {
         this.heladeraRepository = heladeraRepository;
         this.lecturaRepository = lecturaRepository;
+        this.dispositivoService = dispositivoService;
     }
 
     public List<Heladera> listar() {
@@ -43,7 +46,13 @@ public class HeladeraService {
     }
 
     public Heladera crear(HeladeraRequest request) {
-        Long fecha = request.temperaturaActual() != null ? System.currentTimeMillis() : null;
+        // Si se vincula un sensor encontrado, la primera lectura es la que está midiendo
+        Double temperatura = request.temperaturaActual();
+        if (request.numeroSerie() != null) {
+            temperatura = dispositivoService.vincular(request.numeroSerie()).temperaturaActual();
+        }
+
+        Long fecha = temperatura != null ? System.currentTimeMillis() : null;
         int intervalo = request.intervaloLecturaMinutos() != null
                 ? request.intervaloLecturaMinutos()
                 : INTERVALO_DEFAULT;
@@ -51,7 +60,7 @@ public class HeladeraService {
         Heladera nueva = heladeraRepository.save(new Heladera(
                 null,
                 request.nombre().trim(),
-                request.temperaturaActual(),
+                temperatura,
                 request.temperaturaMinima(),
                 request.temperaturaMaxima(),
                 BATERIA_INICIAL,
@@ -60,7 +69,7 @@ public class HeladeraService {
         ));
 
         if (fecha != null) {
-            lecturaRepository.agregar(nueva.id(), new Lectura(fecha, request.temperaturaActual()));
+            lecturaRepository.agregar(nueva.id(), new Lectura(fecha, temperatura));
         }
         return nueva;
     }

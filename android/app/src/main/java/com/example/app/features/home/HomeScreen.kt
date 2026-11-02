@@ -47,8 +47,8 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.example.app.features.auth.LoginScreen
-import com.example.app.features.device.add.AddDeviceScreen
 import com.example.app.features.device.detail.DetailScreen
+import com.example.app.features.device.search.SearchDeviceScreen
 import com.example.app.model.Heladera
 import com.example.app.model.HeladeraStatus
 import com.example.app.model.calcularEstado
@@ -77,7 +77,7 @@ class HomeScreen : Screen {
 
         HomeContent(
             viewModel = viewModel,
-            onAddDevice = { navigator?.push(AddDeviceScreen()) },
+            onAddDevice = { navigator?.push(SearchDeviceScreen()) },
             onHeladeraClick = { id -> navigator?.push(DetailScreen(id)) },
             // Vuelvo al login y borro el historial, así "atrás" no regresa al Home
             onLogout = { navigator?.replaceAll(LoginScreen()) },

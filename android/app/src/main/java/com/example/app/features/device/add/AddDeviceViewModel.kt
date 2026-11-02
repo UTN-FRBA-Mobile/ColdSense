@@ -65,7 +65,10 @@ class AddDeviceViewModel(
         _validationError.value = null
     }
 
-    fun guardar() {
+    /**
+     * @param numeroSerie Sensor encontrado en la búsqueda que se vincula a la heladera nueva.
+     */
+    fun guardar(numeroSerie: String) {
 
         // Evito múltiples solicitudes simultáneas
         if (_isSaving.value)
@@ -80,7 +83,7 @@ class AddDeviceViewModel(
 
         when (resultado) {
             is ValidacionHeladera.Error -> _validationError.value = resultado.mensaje
-            is ValidacionHeladera.Ok -> crear(resultado.request)
+            is ValidacionHeladera.Ok -> crear(resultado.request.copy(numeroSerie = numeroSerie))
         }
     }
 
