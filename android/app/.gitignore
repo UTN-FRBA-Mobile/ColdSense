@@ -1,1 +1,4 @@
 /build
+
+# Firebase propio para desarrollo: en los builds debug pisa a app/google-services.json (el del equipo)
+/src/debug/google-services.json
