@@ -89,6 +89,7 @@ class HomeScreen : Screen {
             // Vuelvo al login y borro el historial, así "atrás" no regresa al Home
             onLogout = {
                 coroutineScope.launch {
+                    viewModel.cerrarSesion()
                     authService.signOut()
                     navigator?.replaceAll(LoginScreen())
                 }
@@ -133,6 +134,7 @@ fun HomeContent(
     // Carga de datos
     LaunchedEffect(Unit) {
         viewModel.loadHeladeras()
+        viewModel.registrarParaAlertas()
     }
 
     Box(

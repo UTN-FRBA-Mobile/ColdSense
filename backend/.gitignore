@@ -1,4 +1,7 @@
 target/
+
+# Clave de la cuenta de servicio de Firebase: es secreta, nunca se sube
+firebase-credenciales.json
 .idea/
 *.iml
 .vscode/

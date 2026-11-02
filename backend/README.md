@@ -24,6 +24,12 @@ La app obtiene un ID token de Firebase después del registro o inicio de sesión
 
 La URL HTTP actual sirve solo para desarrollo local. Como el ID token es una credencial de acceso, al publicar el backend debe usarse HTTPS.
 
+## Simulador de sensores
+Abrí **http://localhost:8080** en el navegador. Hay un panel por heladera para mandar lecturas como si fueran
+del sensor: mové la aguja (o escribí un valor) y tocá **Enviar lectura**, o usá los botones rápidos
+(**En rango**, **Sobre el máximo**, **Desconectar sensor**). El registro de la derecha muestra qué hizo el bridge
+con cada lectura (si mandó la push o por qué no). Es una página estática en `src/main/resources/static/index.html`.
+
 ## Endpoints
 | Método | Ruta | Descripción |
 |---|---|---|
@@ -36,6 +42,18 @@ La URL HTTP actual sirve solo para desarrollo local. Como el ID token es una cre
 | PUT | /heladeras/{id}/temperatura | Simula lectura del sensor |
 | DELETE | /heladeras/{id} | Elimina la heladera y su historial |
 | POST | /dispositivos/busqueda | Busca sensores nuevos (tarda ~3 s y siempre encuentra uno) |
+| POST | /notificaciones/registro | Registra un celular (su `fid` de Firebase) para recibir alertas (push) |
+| DELETE | /notificaciones/registro/{fid} | Da de baja un celular (la app lo llama al cerrar sesión) |
+| GET | /notificaciones/estado | Si las push están activas y cuántos celulares hay registrados |
+
+## Push notifications (Firebase)
+Cuando una lectura deja una heladera **en alerta** o **sin conexión**, el backend les avisa con
+Firebase Cloud Messaging a los celulares registrados (la app se registra sola al abrir el Home).
+Avisa solo cuando cambia el estado: si ya estaba en alerta, una nueva lectura fuera de rango no vuelve a avisar.
+
+Las push usan la misma cuenta de servicio configurada para Firebase Admin en la sección anterior.
+La cuenta debe pertenecer al mismo proyecto que usa Android y `FIREBASE_PROJECT_ID` (por defecto
+`coldsense-159a5`). No hace falta una segunda copia de las credenciales.
 
 ## Ejemplos
 
@@ -63,13 +81,13 @@ curl -X PUT http://localhost:8080/heladeras/1/parametros \
   -H "Authorization: Bearer $FIREBASE_ID_TOKEN" \
   -d '{"temperaturaMinima":2,"temperaturaMaxima":8,"intervaloLecturaMinutos":10}'
 
-# Poner una heladera en alerta
+# Poner una heladera en alerta (manda la push)
 curl -X PUT http://localhost:8080/heladeras/1/temperatura \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $FIREBASE_ID_TOKEN" \
   -d '{"temperatura": 9.5}'
 
-# Simular desconexión
+# Simular desconexión (manda la push)
 curl -X PUT http://localhost:8080/heladeras/1/temperatura \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $FIREBASE_ID_TOKEN" \

@@ -65,4 +65,5 @@ object ApiClient {
 
     val heladeraService: HeladeraService = retrofit.create(HeladeraService::class.java)
     val dispositivoService: DispositivoService = retrofit.create(DispositivoService::class.java)
+    val notificacionService: NotificacionService = retrofit.create(NotificacionService::class.java)
 }

@@ -6,14 +6,20 @@ import androidx.lifecycle.viewModelScope
 import ar.edu.utn.coldsense.model.Heladera
 import ar.edu.utn.coldsense.network.ApiClient
 import ar.edu.utn.coldsense.network.HeladeraService
+import ar.edu.utn.coldsense.network.NotificacionService
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeViewModel(
-    private val heladeraService: HeladeraService = ApiClient.heladeraService
+    private val heladeraService: HeladeraService = ApiClient.heladeraService,
+    private val notificacionService: NotificacionService = ApiClient.notificacionService
 ): ViewModel() {
 
     // Lista de heladeras
@@ -48,6 +54,28 @@ class HomeViewModel(
             } finally {
                 _isLoading.value = false
             }
+        }
+    }
+
+    /**
+     * Registra este celular para recibir las alertas (push notifications). Firebase avisa en
+     * ColdSenseMessagingService.onRegistered y de ahí se manda al backend. Se repite cada vez
+     * que se abre el Home porque el backend guarda los celulares en memoria y los pierde al reiniciarse.
+     */
+    fun registrarParaAlertas() {
+        FirebaseMessaging.getInstance().register()
+            .addOnFailureListener { e -> Log.e("HomeViewModel", "No se pudo registrar en FCM: ${e.message}", e) }
+    }
+
+    /** Da de baja el dispositivo antes de cerrar la sesión de Firebase. */
+    suspend fun cerrarSesion() {
+        try {
+            val fid = withContext(Dispatchers.IO) {
+                Tasks.await(FirebaseInstallations.getInstance().id)
+            }
+            notificacionService.darDeBaja(fid)
+        } catch (e: Exception) {
+            Log.e("HomeViewModel", "No se pudo dar de baja el celular en el backend: ${e.message}", e)
         }
     }
 }
