@@ -14,6 +14,7 @@ import com.google.firebase.messaging.Notification;
 import com.google.firebase.messaging.SendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,10 +38,11 @@ public class NotificacionService {
     // Todavía no hay usuarios, así que todos reciben todas las alertas
     private final Set<String> fids = ConcurrentHashMap.newKeySet();
 
+    // null en modo demo (sin credenciales de Firebase Admin)
     private final FirebaseMessaging firebaseMessaging;
 
-    public NotificacionService(FirebaseMessaging firebaseMessaging) {
-        this.firebaseMessaging = firebaseMessaging;
+    public NotificacionService(ObjectProvider<FirebaseMessaging> firebaseMessaging) {
+        this.firebaseMessaging = firebaseMessaging.getIfAvailable();
     }
 
     public void registrarCelular(String fid) {
@@ -86,6 +88,10 @@ public class NotificacionService {
     }
 
     private void enviar(String titulo, String texto, Long heladeraId) {
+        if (firebaseMessaging == null) {
+            log.info("Alerta sin enviar (modo demo, sin Firebase): {} - {}", titulo, texto);
+            return;
+        }
         if (fids.isEmpty()) {
             log.info("Alerta sin enviar (ningún celular registrado): {} - {}", titulo, texto);
             return;

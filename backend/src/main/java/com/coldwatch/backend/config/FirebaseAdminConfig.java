@@ -7,11 +7,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 
+/**
+ * Firebase Admin solo se configura si hay credenciales. Sin ellas el backend arranca en
+ * modo demo (ver {@link CredencialesFirebaseDisponibles}).
+ */
 @Configuration
+@Conditional(CredencialesFirebaseDisponibles.class)
 public class FirebaseAdminConfig {
 
     @Bean
