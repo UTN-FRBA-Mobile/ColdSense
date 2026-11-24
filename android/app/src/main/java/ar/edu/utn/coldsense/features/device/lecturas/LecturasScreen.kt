@@ -32,7 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,13 +45,7 @@ import ar.edu.utn.coldsense.ui.components.Spinner
 import ar.edu.utn.coldsense.utils.formatLimite
 import ar.edu.utn.coldsense.utils.formatTemperature
 import ar.edu.utn.coldsense.utils.formatUltimaLectura
-
-private val TextPrimary = Color(0xFF1A1F36)
-private val TextSecondary = Color(0xFF6B7280)
-private val CardBorder = Color(0xFFE5E8EF)
-private val SurfaceGray = Color(0xFFF5F6F8)
-private val DangerRed = Color(0xFFEF4444)
-private val AlertBackground = Color(0xFFFFF1F1)
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 /*
  * ================================================================
@@ -157,7 +150,7 @@ private fun LecturasHeader(onBack: () -> Unit) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Volver",
-                tint = TextPrimary
+                tint = ColdSenseTheme.colors.textPrimary
             )
         }
 
@@ -167,7 +160,7 @@ private fun LecturasHeader(onBack: () -> Unit) {
             textAlign = TextAlign.Center,
             fontSize = 17.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary
+            color = ColdSenseTheme.colors.textPrimary
         )
 
         // Espacio del mismo ancho que el botón de volver, para centrar el título
@@ -203,12 +196,12 @@ private fun LecturasBody(
                     text = heladera.nombre,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary
+                    color = ColdSenseTheme.colors.textPrimary
                 )
                 Text(
                     text = "Rango configurado: ${formatLimite(heladera.temperaturaMinima)} a ${formatLimite(heladera.temperaturaMaxima)}",
                     fontSize = 14.sp,
-                    color = TextSecondary
+                    color = ColdSenseTheme.colors.textSecondary
                 )
             }
         }
@@ -218,7 +211,7 @@ private fun LecturasBody(
                 Text(
                     text = "Todavía no hay lecturas registradas.",
                     fontSize = 14.sp,
-                    color = TextSecondary
+                    color = ColdSenseTheme.colors.textSecondary
                 )
             }
         } else {
@@ -249,7 +242,7 @@ private fun ResumenCard(resumen: ResumenLecturas, cantidad: Int) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(SurfaceGray)
+            .background(ColdSenseTheme.colors.surfaceMuted)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -257,7 +250,7 @@ private fun ResumenCard(resumen: ResumenLecturas, cantidad: Int) {
             text = "Resumen de las últimas $cantidad lecturas",
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
-            color = TextSecondary
+            color = ColdSenseTheme.colors.textSecondary
         )
 
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -274,7 +267,7 @@ private fun ResumenCard(resumen: ResumenLecturas, cantidad: Int) {
             },
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
-            color = if (resumen.fueraDeRango == 0) Color(0xFF2E9E5B) else DangerRed
+            color = if (resumen.fueraDeRango == 0) ColdSenseTheme.colors.success else ColdSenseTheme.colors.danger
         )
     }
 }
@@ -282,8 +275,8 @@ private fun ResumenCard(resumen: ResumenLecturas, cantidad: Int) {
 @Composable
 private fun ResumenDato(label: String, valor: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(text = label, fontSize = 12.sp, color = TextSecondary)
-        Text(text = valor, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+        Text(text = label, fontSize = 12.sp, color = ColdSenseTheme.colors.textSecondary)
+        Text(text = valor, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = ColdSenseTheme.colors.textPrimary)
     }
 }
 
@@ -306,10 +299,10 @@ private fun LecturaRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(forma)
-            .background(if (fueraDeRango) AlertBackground else SurfaceGray)
+            .background(if (fueraDeRango) ColdSenseTheme.colors.dangerBackground else ColdSenseTheme.colors.surfaceMuted)
     ) {
         if (!esPrimera) {
-            HorizontalDivider(color = CardBorder)
+            HorizontalDivider(color = ColdSenseTheme.colors.border)
         }
 
         Row(
@@ -321,7 +314,7 @@ private fun LecturaRow(
             Text(
                 text = formatUltimaLectura(lectura.fecha),
                 fontSize = 14.sp,
-                color = TextPrimary,
+                color = ColdSenseTheme.colors.textPrimary,
                 modifier = Modifier.weight(1f)
             )
 
@@ -329,7 +322,7 @@ private fun LecturaRow(
                 Icon(
                     imageVector = Icons.Default.Warning,
                     contentDescription = "Fuera de rango",
-                    tint = DangerRed,
+                    tint = ColdSenseTheme.colors.danger,
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
@@ -339,7 +332,7 @@ private fun LecturaRow(
                 text = formatTemperature(lectura.temperatura),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = if (fueraDeRango) DangerRed else TextPrimary
+                color = if (fueraDeRango) ColdSenseTheme.colors.danger else ColdSenseTheme.colors.textPrimary
             )
         }
     }

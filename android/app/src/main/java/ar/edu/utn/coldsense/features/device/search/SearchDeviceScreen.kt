@@ -28,7 +28,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,9 +40,7 @@ import ar.edu.utn.coldsense.model.DispositivoEncontrado
 import ar.edu.utn.coldsense.ui.components.ErrorMessage
 import ar.edu.utn.coldsense.ui.components.NextButton
 import ar.edu.utn.coldsense.ui.components.Spinner
-
-private val TextPrimary = Color(0xFF1A1F36)
-private val TextSecondary = Color(0xFF6B7280)
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 /*
  * ================================================================
@@ -143,7 +140,7 @@ private fun SearchDeviceHeader(onBack: () -> Unit) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Volver",
-                tint = TextPrimary
+                tint = ColdSenseTheme.colors.textPrimary
             )
         }
 
@@ -153,7 +150,7 @@ private fun SearchDeviceHeader(onBack: () -> Unit) {
             textAlign = TextAlign.Center,
             fontSize = 17.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary
+            color = ColdSenseTheme.colors.textPrimary
         )
 
         // Espacio del mismo ancho que el botón de volver, para centrar el título
@@ -181,7 +178,7 @@ private fun Buscando(modifier: Modifier = Modifier) {
             text = "Buscando dispositivos…",
             fontSize = 17.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary
+            color = ColdSenseTheme.colors.textPrimary
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -189,7 +186,7 @@ private fun Buscando(modifier: Modifier = Modifier) {
         Text(
             text = "Asegurate de que el sensor esté encendido y cerca del bridge.",
             fontSize = 14.sp,
-            color = TextSecondary,
+            color = ColdSenseTheme.colors.textSecondary,
             textAlign = TextAlign.Center
         )
     }
@@ -219,12 +216,12 @@ private fun Resultados(
                 },
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary
+                color = ColdSenseTheme.colors.textPrimary
             )
             Text(
                 text = "Tocá el dispositivo para ponerle nombre y configurarlo.",
                 fontSize = 14.sp,
-                color = TextSecondary
+                color = ColdSenseTheme.colors.textSecondary
             )
         }
 
@@ -253,7 +250,7 @@ private fun SinResultados(
         Icon(
             imageVector = Icons.Default.SearchOff,
             contentDescription = null,
-            tint = TextSecondary,
+            tint = ColdSenseTheme.colors.textSecondary,
             modifier = Modifier.size(56.dp)
         )
 
@@ -263,7 +260,7 @@ private fun SinResultados(
             text = "No encontramos dispositivos nuevos",
             fontSize = 17.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary
+            color = ColdSenseTheme.colors.textPrimary
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -271,7 +268,7 @@ private fun SinResultados(
         Text(
             text = "Revisá que el sensor esté encendido y cerca del bridge, y volvé a buscar.",
             fontSize = 14.sp,
-            color = TextSecondary,
+            color = ColdSenseTheme.colors.textSecondary,
             textAlign = TextAlign.Center
         )
 
