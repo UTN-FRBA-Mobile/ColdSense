@@ -4,6 +4,7 @@ import ar.edu.utn.coldsense.model.HeladeraRequest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import ar.edu.utn.coldsense.R
 
 class ValidarNuevaHeladeraTest {
 
@@ -41,7 +42,7 @@ class ValidarNuevaHeladeraTest {
     @Test
     fun minimaMayorQueMaxima_esError() {
         assertEquals(
-            ValidacionHeladera.Error("La temperatura mínima no puede ser mayor que la máxima."),
+            ValidacionHeladera.Error(R.string.validacion_minima_mayor_que_maxima),
             validarNuevaHeladera("Heladera", "8", "2", "10")
         )
     }

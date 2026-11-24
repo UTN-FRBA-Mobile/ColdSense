@@ -11,6 +11,8 @@ import ar.edu.utn.coldsense.network.HeladeraService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import androidx.annotation.StringRes
+import ar.edu.utn.coldsense.R
 
 class AddDeviceViewModel(
     private val heladeraService: HeladeraService = ApiClient.heladeraService
@@ -30,7 +32,7 @@ class AddDeviceViewModel(
     val intervalo = _intervalo.asStateFlow()
 
     // Error de validación del formulario (null = formulario válido)
-    private val _validationError = MutableStateFlow<String?>(null)
+    private val _validationError = MutableStateFlow<Int?>(null)
     val validationError = _validationError.asStateFlow()
 
     // Estado de guardado
@@ -38,7 +40,7 @@ class AddDeviceViewModel(
     val isSaving = _isSaving.asStateFlow()
 
     // Mensaje de error del servidor (null = sin error)
-    private val _errorMessage = MutableStateFlow<String?>(null)
+    private val _errorMessage = MutableStateFlow<Int?>(null)
     val errorMessage = _errorMessage.asStateFlow()
 
     // Pasa a true cuando se creó, para que la pantalla vuelva atrás
@@ -97,7 +99,7 @@ class AddDeviceViewModel(
                 _isCreated.value = true
 
             } catch (e: Exception) {
-                _errorMessage.value = "No se pudo agregar el dispositivo. Revisá tu conexión e intentá de nuevo."
+                _errorMessage.value = R.string.agregar_error
                 Log.e(TAG, "Error al crear la heladera: ${e.message}", e)
             } finally {
                 _isSaving.value = false
@@ -120,7 +122,7 @@ class AddDeviceViewModel(
  */
 sealed interface ValidacionHeladera {
     data class Ok(val request: HeladeraRequest) : ValidacionHeladera
-    data class Error(val mensaje: String) : ValidacionHeladera
+    data class Error(@StringRes val mensaje: Int) : ValidacionHeladera
 }
 
 /**
@@ -135,7 +137,7 @@ fun validarNuevaHeladera(
 ): ValidacionHeladera {
 
     if (nombre.isBlank()) {
-        return ValidacionHeladera.Error("Ingresá un nombre para el dispositivo.")
+        return ValidacionHeladera.Error(R.string.validacion_nombre_vacio)
     }
 
     return when (val parametros = validarParametros(temperaturaMinima, temperaturaMaxima, intervalo)) {

@@ -41,6 +41,8 @@ import ar.edu.utn.coldsense.ui.components.ErrorMessage
 import ar.edu.utn.coldsense.ui.components.FormField
 import ar.edu.utn.coldsense.ui.components.NextButton
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
 
 /*
  * ================================================================
@@ -122,40 +124,40 @@ fun AddDeviceContent(
                 DispositivoEncontradoCard(dispositivo = dispositivo)
 
                 Text(
-                    text = "Ponele un nombre y configurá los límites de la heladera donde instalaste el sensor.",
+                    text = stringResource(R.string.agregar_descripcion),
                     fontSize = 14.sp,
                     color = ColdSenseTheme.colors.textSecondary
                 )
 
                 FormField(
-                    label = "Nombre",
+                    label = stringResource(R.string.campo_nombre),
                     value = nombre,
                     onValueChange = viewModel::onNombreChange,
-                    placeholder = "Ej: Heladera Bar",
+                    placeholder = stringResource(R.string.campo_nombre_ejemplo),
                     keyboardType = KeyboardType.Text
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     FormField(
-                        label = "Temp. mínima (°C)",
+                        label = stringResource(R.string.campo_temp_minima),
                         value = temperaturaMinima,
                         onValueChange = viewModel::onTemperaturaMinimaChange,
-                        placeholder = "Ej: 2",
+                        placeholder = stringResource(R.string.campo_temp_minima_ejemplo),
                         keyboardType = KeyboardType.Decimal,
                         modifier = Modifier.weight(1f)
                     )
                     FormField(
-                        label = "Temp. máxima (°C)",
+                        label = stringResource(R.string.campo_temp_maxima),
                         value = temperaturaMaxima,
                         onValueChange = viewModel::onTemperaturaMaximaChange,
-                        placeholder = "Ej: 6",
+                        placeholder = stringResource(R.string.campo_temp_maxima_ejemplo),
                         keyboardType = KeyboardType.Decimal,
                         modifier = Modifier.weight(1f)
                     )
                 }
 
                 FormField(
-                    label = "Intervalo de lectura (minutos)",
+                    label = stringResource(R.string.campo_intervalo),
                     value = intervalo,
                     onValueChange = viewModel::onIntervaloChange,
                     placeholder = AddDeviceViewModel.INTERVALO_DEFAULT.toString(),
@@ -166,7 +168,7 @@ fun AddDeviceContent(
                 // Error de validación del formulario
                 validationError?.let { mensaje ->
                     Text(
-                        text = mensaje,
+                        text = stringResource(mensaje),
                         fontSize = 13.sp,
                         color = ColdSenseTheme.colors.danger
                     )
@@ -181,7 +183,7 @@ fun AddDeviceContent(
                 NextButton(
                     onClick = { viewModel.guardar(dispositivo.numeroSerie) },
                     enabled = !isSaving,
-                    text = "Guardar dispositivo",
+                    text = stringResource(R.string.agregar_guardar),
                     isLoading = isSaving
                 )
             }
@@ -190,8 +192,8 @@ fun AddDeviceContent(
         // Overlay de error del servidor
         errorMessage?.let { mensaje ->
             ErrorMessage(
-                errorText = mensaje,
-                buttonText = "Aceptar",
+                errorText = stringResource(mensaje),
+                buttonText = stringResource(R.string.comun_aceptar),
                 onClick = viewModel::dismissError
             )
         }
@@ -215,13 +217,13 @@ private fun AddDeviceHeader(onBack: () -> Unit) {
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Volver",
+                contentDescription = stringResource(R.string.comun_volver),
                 tint = ColdSenseTheme.colors.textPrimary
             )
         }
 
         Text(
-            text = "Configurar dispositivo",
+            text = stringResource(R.string.agregar_titulo),
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             fontSize = 17.sp,

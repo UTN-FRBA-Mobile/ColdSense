@@ -53,12 +53,15 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.compose.ui.res.stringResource
+import androidx.annotation.StringRes
+import ar.edu.utn.coldsense.R
 
 /** Líneas que se pueden mostrar en el gráfico. */
-enum class SerieGrafico(val label: String, val valor: (PuntoGrafico) -> Double) {
-    Promedio("Promedio", { it.promedio }),
-    Maxima("Máxima", { it.maxima }),
-    Minima("Mínima", { it.minima })
+enum class SerieGrafico(@StringRes val label: Int, val valor: (PuntoGrafico) -> Double) {
+    Promedio(R.string.serie_promedio, { it.promedio }),
+    Maxima(R.string.serie_maxima, { it.maxima }),
+    Minima(R.string.serie_minima, { it.minima })
 }
 
 /** Color de cada línea según el tema (claro u oscuro). */
@@ -79,18 +82,18 @@ private const val UN_DIA = 24 * UNA_HORA
  *
  * @param agrupacionMillis Tamaño del bloque que se promedia en un solo punto
  *                         (null = se muestra cada lectura).
- * @param nombreBloque     Cómo se nombra ese bloque en la leyenda.
+ * @param leyenda          Texto que explica ese bloque debajo del gráfico.
  */
 enum class PeriodoGrafico(
-    val label: String,
+    @StringRes val label: Int,
     val duracionMillis: Long,
     val agrupacionMillis: Long?,
-    val nombreBloque: String?
+    @StringRes val leyenda: Int?
 ) {
-    UnaHora("1 hora", UNA_HORA, null, null),
-    VeinticuatroHoras("24 horas", UN_DIA, UNA_HORA, "hora"),
-    SieteDias("7 días", 7 * UN_DIA, 6 * UNA_HORA, "6 horas"),
-    UnMes("1 mes", 30 * UN_DIA, UN_DIA, "día")
+    UnaHora(R.string.periodo_1_hora, UNA_HORA, null, null),
+    VeinticuatroHoras(R.string.periodo_24_horas, UN_DIA, UNA_HORA, R.string.grafico_valores_por_hora),
+    SieteDias(R.string.periodo_7_dias, 7 * UN_DIA, 6 * UNA_HORA, R.string.grafico_valores_por_6_horas),
+    UnMes(R.string.periodo_1_mes, 30 * UN_DIA, UN_DIA, R.string.grafico_valores_por_dia)
 }
 
 /**
@@ -177,7 +180,7 @@ fun GraficoSection(
                 state.isLoading -> Spinner()
 
                 state.hasError -> Text(
-                    text = "No se pudo cargar el gráfico.\nTocá para reintentar.",
+                    text = stringResource(R.string.grafico_error),
                     fontSize = 14.sp,
                     color = ColdSenseTheme.colors.textSecondary,
                     textAlign = TextAlign.Center,
@@ -201,7 +204,7 @@ fun GraficoSection(
                     )
                     if (state.lecturas.isEmpty()) {
                         Text(
-                            text = "Sin lecturas en este período",
+                            text = stringResource(R.string.grafico_sin_lecturas),
                             fontSize = 14.sp,
                             color = ColdSenseTheme.colors.textSecondary,
                             modifier = Modifier
@@ -216,11 +219,11 @@ fun GraficoSection(
 
         // Selector de líneas (solo cuando hay bloques; en "1 hora" cada punto es
         // una sola lectura, así que promedio, mínima y máxima serían la misma línea)
-        val bloque = state.periodo.nombreBloque
-        if (bloque != null) {
+        val leyenda = state.periodo.leyenda
+        if (leyenda != null) {
             SerieSelector(activas = state.series, onClick = onSerieClick)
             Text(
-                text = "Valores por $bloque",
+                text = stringResource(leyenda),
                 fontSize = 12.sp,
                 color = ColdSenseTheme.colors.textSecondary,
                 modifier = Modifier.fillMaxWidth(),
@@ -271,7 +274,7 @@ private fun SerieSelector(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = serie.label,
+                    text = stringResource(serie.label),
                     fontSize = 13.sp,
                     fontWeight = if (activa) FontWeight.SemiBold else FontWeight.Medium,
                     color = if (activa) ColdSenseTheme.colors.textPrimary else ColdSenseTheme.colors.textSecondary
@@ -316,7 +319,7 @@ private fun PeriodoSelector(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = periodo.label,
+                    text = stringResource(periodo.label),
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
                     fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
@@ -351,6 +354,9 @@ private fun GraficoTemperatura(
     val colorLimite = ColdSenseTheme.colors.danger
     val ejeStyle = TextStyle(fontSize = 10.sp, color = ColdSenseTheme.colors.textSecondary)
     val limiteStyle = TextStyle(fontSize = 10.sp, color = colorLimite, fontWeight = FontWeight.SemiBold)
+    // Dentro del Canvas no se pueden leer recursos, así que armo los textos antes
+    val textoMaximo = stringResource(R.string.grafico_limite_maximo, formatLimite(temperaturaMaxima))
+    val textoMinimo = stringResource(R.string.grafico_limite_minimo, formatLimite(temperaturaMinima))
 
     // Puntos a dibujar: cada lectura en "1 hora", bloques en el resto
     val puntos = remember(lecturas, periodo) { agruparLecturas(lecturas, periodo) }
@@ -424,9 +430,9 @@ private fun GraficoTemperatura(
         }
 
         // Líneas de temperatura máxima y mínima configuradas
-        dibujarLimite(textMeasurer, "Máx ${formatLimite(temperaturaMaxima)}", yDe(temperaturaMaxima),
+        dibujarLimite(textMeasurer, textoMaximo, yDe(temperaturaMaxima),
             left, right, colorLimite, limiteStyle, etiquetaArriba = true)
-        dibujarLimite(textMeasurer, "Mín ${formatLimite(temperaturaMinima)}", yDe(temperaturaMinima),
+        dibujarLimite(textMeasurer, textoMinimo, yDe(temperaturaMinima),
             left, right, colorLimite, limiteStyle, etiquetaArriba = false)
 
         // Separo los puntos en tramos continuos. Si entre dos puntos pasó mucho más de lo

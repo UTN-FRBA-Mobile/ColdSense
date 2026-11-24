@@ -7,6 +7,7 @@
     <string name="comun_continuar">Continuar</string>
     <string name="comun_reintentar">Reintentar</string>
     <string name="comun_configuracion">Configuración</string>
+    <string name="comun_aceptar">Aceptar</string>
 
     <!-- Mensaje de error y diálogo de confirmación -->
     <string name="error_titulo">Algo salió mal</string>
@@ -76,4 +77,100 @@
     <!-- Notificaciones -->
     <string name="notificaciones_canal_nombre">Alertas de temperatura</string>
     <string name="notificaciones_canal_descripcion">Avisos cuando una heladera sale de rango o pierde conexión</string>
+
+    <!-- Validaciones de los formularios -->
+    <string name="validacion_nombre_vacio">Ingresá un nombre para el dispositivo.</string>
+    <string name="validacion_minima_no_numero">La temperatura mínima debe ser un número.</string>
+    <string name="validacion_maxima_no_numero">La temperatura máxima debe ser un número.</string>
+    <string name="validacion_minima_mayor_que_maxima">La temperatura mínima no puede ser mayor que la máxima.</string>
+    <string name="validacion_intervalo_minimo">El intervalo debe ser de al menos 1 minuto.</string>
+
+    <!-- Campos de los formularios -->
+    <string name="campo_nombre">Nombre</string>
+    <string name="campo_nombre_ejemplo">Ej: Heladera Bar</string>
+    <string name="campo_temp_minima">Temp. mínima (°C)</string>
+    <string name="campo_temp_minima_ejemplo">Ej: 2</string>
+    <string name="campo_temp_maxima">Temp. máxima (°C)</string>
+    <string name="campo_temp_maxima_ejemplo">Ej: 6</string>
+    <string name="campo_intervalo">Intervalo de lectura (minutos)</string>
+    <string name="campo_intervalo_ejemplo">Ej: 10</string>
+
+    <!-- Búsqueda de dispositivos -->
+    <string name="buscar_titulo">Agregar dispositivo</string>
+    <string name="buscar_buscando">Buscando dispositivos…</string>
+    <string name="buscar_ayuda">Asegurate de que el sensor esté encendido y cerca del bridge.</string>
+    <plurals name="buscar_encontrados">
+        <item quantity="one">Encontramos %d dispositivo nuevo</item>
+        <item quantity="many">Encontramos %d dispositivos nuevos</item>
+        <item quantity="other">Encontramos %d dispositivos nuevos</item>
+    </plurals>
+    <string name="buscar_tocar_para_configurar">Tocá el dispositivo para ponerle nombre y configurarlo.</string>
+    <string name="buscar_sin_resultados">No encontramos dispositivos nuevos</string>
+    <string name="buscar_sin_resultados_ayuda">Revisá que el sensor esté encendido y cerca del bridge, y volvé a buscar.</string>
+    <string name="buscar_de_nuevo">Buscar de nuevo</string>
+    <string name="buscar_error">No se pudo buscar dispositivos. Revisá tu conexión e intentá de nuevo.</string>
+    <string name="dispositivo_numero_serie">N° de serie: %1$s</string>
+    <string name="dispositivo_lectura_actual">Lectura actual: %1$s</string>
+
+    <!-- Alta de dispositivo -->
+    <string name="agregar_titulo">Configurar dispositivo</string>
+    <string name="agregar_descripcion">Ponele un nombre y configurá los límites de la heladera donde instalaste el sensor.</string>
+    <string name="agregar_guardar">Guardar dispositivo</string>
+    <string name="agregar_error">No se pudo agregar el dispositivo. Revisá tu conexión e intentá de nuevo.</string>
+
+    <!-- Edición de parámetros -->
+    <string name="editar_titulo">Editar parámetros</string>
+    <string name="editar_ayuda_rango">Si la temperatura sale de este rango, la heladera pasa a estar en alerta.</string>
+    <string name="editar_guardar">Guardar cambios</string>
+    <string name="editar_error_cargar">No se pudieron cargar los parámetros. Revisá tu conexión e intentá de nuevo.</string>
+    <string name="editar_error_guardar">No se pudieron guardar los cambios. Revisá tu conexión e intentá de nuevo.</string>
+
+    <!-- Detalle de la heladera -->
+    <string name="detalle_estado_actual">Estado actual</string>
+    <string name="detalle_ultima_lectura">Última lectura: %1$s</string>
+    <string name="detalle_rango_configurado">Rango configurado</string>
+    <string name="detalle_minima">Mín:</string>
+    <string name="detalle_maxima">Máx:</string>
+    <string name="detalle_estado_sensor">Estado del sensor</string>
+    <string name="detalle_sensor_conectado">Conectado</string>
+    <string name="detalle_bateria">Batería: %1$s</string>
+    <string name="detalle_ultimas_lecturas">Últimas lecturas</string>
+    <string name="detalle_ver_todas">Ver todas</string>
+    <string name="detalle_eliminar">Eliminar dispositivo</string>
+    <string name="detalle_error_cargar">No se pudo cargar el detalle de la heladera. Revisá tu conexión e intentá de nuevo.</string>
+    <string name="detalle_error_eliminar">No se pudo eliminar el dispositivo. Intentá de nuevo.</string>
+    <string name="lecturas_vacio">Todavía no hay lecturas registradas.</string>
+
+    <!-- Gráfico de temperatura -->
+    <string name="serie_promedio">Promedio</string>
+    <string name="serie_maxima">Máxima</string>
+    <string name="serie_minima">Mínima</string>
+    <string name="periodo_1_hora">1 hora</string>
+    <string name="periodo_24_horas">24 horas</string>
+    <string name="periodo_7_dias">7 días</string>
+    <string name="periodo_1_mes">1 mes</string>
+    <string name="grafico_valores_por_hora">Valores por hora</string>
+    <string name="grafico_valores_por_6_horas">Valores por 6 horas</string>
+    <string name="grafico_valores_por_dia">Valores por día</string>
+    <string name="grafico_error">No se pudo cargar el gráfico.\nTocá para reintentar.</string>
+    <string name="grafico_sin_lecturas">Sin lecturas en este período</string>
+    <string name="grafico_limite_maximo">Máx %1$s</string>
+    <string name="grafico_limite_minimo">Mín %1$s</string>
+
+    <!-- Historial de lecturas -->
+    <string name="lecturas_titulo">Historial de lecturas</string>
+    <string name="lecturas_error_cargar">No se pudo cargar el historial. Revisá tu conexión e intentá de nuevo.</string>
+    <string name="lecturas_rango_configurado">Rango configurado: %1$s a %2$s</string>
+    <plurals name="lecturas_resumen">
+        <item quantity="one">Resumen de la última lectura</item>
+        <item quantity="many">Resumen de las últimas %d lecturas</item>
+        <item quantity="other">Resumen de las últimas %d lecturas</item>
+    </plurals>
+    <string name="lecturas_todas_en_rango">Todas las lecturas estuvieron dentro del rango.</string>
+    <plurals name="lecturas_fuera_de_rango">
+        <item quantity="one">%d lectura fuera de rango.</item>
+        <item quantity="many">%d lecturas fuera de rango.</item>
+        <item quantity="other">%d lecturas fuera de rango.</item>
+    </plurals>
+    <string name="lecturas_fuera_de_rango_icono">Fuera de rango</string>
 </resources>

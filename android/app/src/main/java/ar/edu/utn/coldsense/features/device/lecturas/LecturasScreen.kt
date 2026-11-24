@@ -46,6 +46,9 @@ import ar.edu.utn.coldsense.utils.formatLimite
 import ar.edu.utn.coldsense.utils.formatTemperature
 import ar.edu.utn.coldsense.utils.formatUltimaLectura
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
+import ar.edu.utn.coldsense.R
 
 /*
  * ================================================================
@@ -125,7 +128,7 @@ fun LecturasContent(
         // Overlay de error
         errorMessage?.let { mensaje ->
             ErrorMessage(
-                errorText = mensaje,
+                errorText = stringResource(mensaje),
                 onClick = { viewModel.loadLecturas(heladeraId) }
             )
         }
@@ -149,13 +152,13 @@ private fun LecturasHeader(onBack: () -> Unit) {
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Volver",
+                contentDescription = stringResource(R.string.comun_volver),
                 tint = ColdSenseTheme.colors.textPrimary
             )
         }
 
         Text(
-            text = "Historial de lecturas",
+            text = stringResource(R.string.lecturas_titulo),
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             fontSize = 17.sp,
@@ -199,7 +202,11 @@ private fun LecturasBody(
                     color = ColdSenseTheme.colors.textPrimary
                 )
                 Text(
-                    text = "Rango configurado: ${formatLimite(heladera.temperaturaMinima)} a ${formatLimite(heladera.temperaturaMaxima)}",
+                    text = stringResource(
+                        R.string.lecturas_rango_configurado,
+                        formatLimite(heladera.temperaturaMinima),
+                        formatLimite(heladera.temperaturaMaxima)
+                    ),
                     fontSize = 14.sp,
                     color = ColdSenseTheme.colors.textSecondary
                 )
@@ -209,7 +216,7 @@ private fun LecturasBody(
         if (resumen == null) {
             item {
                 Text(
-                    text = "Todavía no hay lecturas registradas.",
+                    text = stringResource(R.string.lecturas_vacio),
                     fontSize = 14.sp,
                     color = ColdSenseTheme.colors.textSecondary
                 )
@@ -247,23 +254,23 @@ private fun ResumenCard(resumen: ResumenLecturas, cantidad: Int) {
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = "Resumen de las últimas $cantidad lecturas",
+            text = pluralStringResource(R.plurals.lecturas_resumen, cantidad, cantidad),
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
             color = ColdSenseTheme.colors.textSecondary
         )
 
         Row(modifier = Modifier.fillMaxWidth()) {
-            ResumenDato(label = "Mínima", valor = formatTemperature(resumen.minima), modifier = Modifier.weight(1f))
-            ResumenDato(label = "Promedio", valor = formatTemperature(resumen.promedio), modifier = Modifier.weight(1f))
-            ResumenDato(label = "Máxima", valor = formatTemperature(resumen.maxima), modifier = Modifier.weight(1f))
+            ResumenDato(label = stringResource(R.string.serie_minima), valor = formatTemperature(resumen.minima), modifier = Modifier.weight(1f))
+            ResumenDato(label = stringResource(R.string.serie_promedio), valor = formatTemperature(resumen.promedio), modifier = Modifier.weight(1f))
+            ResumenDato(label = stringResource(R.string.serie_maxima), valor = formatTemperature(resumen.maxima), modifier = Modifier.weight(1f))
         }
 
         Text(
             text = if (resumen.fueraDeRango == 0) {
-                "Todas las lecturas estuvieron dentro del rango."
+                stringResource(R.string.lecturas_todas_en_rango)
             } else {
-                "${resumen.fueraDeRango} lecturas fuera de rango."
+                pluralStringResource(R.plurals.lecturas_fuera_de_rango, resumen.fueraDeRango, resumen.fueraDeRango)
             },
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
@@ -321,7 +328,7 @@ private fun LecturaRow(
             if (fueraDeRango) {
                 Icon(
                     imageVector = Icons.Default.Warning,
-                    contentDescription = "Fuera de rango",
+                    contentDescription = stringResource(R.string.lecturas_fuera_de_rango_icono),
                     tint = ColdSenseTheme.colors.danger,
                     modifier = Modifier.size(16.dp)
                 )

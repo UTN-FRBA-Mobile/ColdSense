@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import ar.edu.utn.coldsense.model.DispositivoEncontrado
 import ar.edu.utn.coldsense.utils.formatTemperature
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
 
 /**
  * Tarjeta de un sensor encontrado en la búsqueda.
@@ -80,12 +82,12 @@ fun DispositivoEncontradoCard(
                 maxLines = 1
             )
             Text(
-                text = "N° de serie: ${dispositivo.numeroSerie}",
+                text = stringResource(R.string.dispositivo_numero_serie, dispositivo.numeroSerie),
                 fontSize = 13.sp,
                 color = ColdSenseTheme.colors.textSecondary
             )
             Text(
-                text = "Lectura actual: ${formatTemperature(dispositivo.temperaturaActual)}",
+                text = stringResource(R.string.dispositivo_lectura_actual, formatTemperature(dispositivo.temperaturaActual)),
                 fontSize = 13.sp,
                 color = ColdSenseTheme.colors.textSecondary
             )

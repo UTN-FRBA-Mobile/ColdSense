@@ -75,6 +75,7 @@ import ar.edu.utn.coldsense.utils.formatTemperature
 import ar.edu.utn.coldsense.utils.formatUltimaLectura
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
 
 /*
  * ================================================================
@@ -203,9 +204,9 @@ fun DeviceDetailContent(
         // Overlay de error
         errorMessage?.let { mensaje ->
             ErrorMessage(
-                errorText = mensaje,
+                errorText = stringResource(mensaje),
                 // Si nunca cargó, reintenta. Si ya hay datos (ej: falló el eliminar), solo cierra.
-                buttonText = if (heladera == null) "Reintentar" else "Aceptar",
+                buttonText = stringResource(if (heladera == null) R.string.comun_reintentar else R.string.comun_aceptar),
                 onClick = {
                     if (heladera == null) viewModel.loadDetalle(heladeraId)
                     else viewModel.dismissError()
@@ -237,7 +238,7 @@ private fun DetailHeader(
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Volver",
+                contentDescription = stringResource(R.string.comun_volver),
                 tint = ColdSenseTheme.colors.textPrimary
             )
         }
@@ -256,7 +257,7 @@ private fun DetailHeader(
         IconButton(onClick = onEdit, enabled = editEnabled) {
             Icon(
                 imageVector = Icons.Default.Edit,
-                contentDescription = "Editar parámetros",
+                contentDescription = stringResource(R.string.editar_titulo),
                 tint = if (editEnabled) ColdSenseTheme.colors.primary else ColdSenseTheme.colors.primary.copy(alpha = 0.3f)
             )
         }
@@ -342,7 +343,7 @@ private fun DetailBody(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "Eliminar dispositivo",
+                text = stringResource(R.string.detalle_eliminar),
                 color = ColdSenseTheme.colors.danger,
                 fontWeight = FontWeight.SemiBold
             )
@@ -365,7 +366,7 @@ private fun EstadoActualCard(status: HeladeraStatus) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = "Estado actual",
+                text = stringResource(R.string.detalle_estado_actual),
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = status.color
@@ -411,7 +412,7 @@ private fun TemperaturaActual(heladera: Heladera) {
             color = ColdSenseTheme.colors.textPrimary
         )
         Text(
-            text = "Última lectura: ${formatUltimaLectura(heladera.ultimaLectura)}",
+            text = stringResource(R.string.detalle_ultima_lectura, formatUltimaLectura(heladera.ultimaLectura)),
             fontSize = 13.sp,
             color = ColdSenseTheme.colors.textSecondary
         )
@@ -427,9 +428,9 @@ private fun RangoCard(heladera: Heladera, modifier: Modifier = Modifier) {
             .padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        CardTitle(text = "Rango configurado")
-        LimiteRow(label = "Mín:", valor = heladera.temperaturaMinima)
-        LimiteRow(label = "Máx:", valor = heladera.temperaturaMaxima)
+        CardTitle(text = stringResource(R.string.detalle_rango_configurado))
+        LimiteRow(label = stringResource(R.string.detalle_minima), valor = heladera.temperaturaMinima)
+        LimiteRow(label = stringResource(R.string.detalle_maxima), valor = heladera.temperaturaMaxima)
     }
 }
 
@@ -456,18 +457,20 @@ private fun SensorCard(heladera: Heladera, status: HeladeraStatus, modifier: Mod
             .padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        CardTitle(text = "Estado del sensor")
+        CardTitle(text = stringResource(R.string.detalle_estado_sensor))
 
         IconTextRow(
             icon = status.signalIcon,
             iconColor = status.signalColor,
-            text = if (status == HeladeraStatus.Disconnected) "Sin conexión" else "Conectado"
+            text = stringResource(
+                if (status == HeladeraStatus.Disconnected) R.string.estado_sin_conexion else R.string.detalle_sensor_conectado
+            )
         )
 
         IconTextRow(
             icon = Icons.Default.BatteryStd,
             iconColor = ColdSenseTheme.colors.textSecondary,
-            text = "Batería: ${heladera.bateria?.let { "$it%" } ?: "--"}"
+            text = stringResource(R.string.detalle_bateria, heladera.bateria?.let { "$it%" } ?: "--")
         )
     }
 }
@@ -482,13 +485,13 @@ private fun LecturasSection(lecturas: List<Lectura>, onVerTodas: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Últimas lecturas",
+                text = stringResource(R.string.detalle_ultimas_lecturas),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = ColdSenseTheme.colors.textPrimary
             )
             Text(
-                text = "Ver todas",
+                text = stringResource(R.string.detalle_ver_todas),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = ColdSenseTheme.colors.primary,
@@ -501,7 +504,7 @@ private fun LecturasSection(lecturas: List<Lectura>, onVerTodas: () -> Unit) {
 
         if (lecturas.isEmpty()) {
             Text(
-                text = "Todavía no hay lecturas registradas.",
+                text = stringResource(R.string.lecturas_vacio),
                 fontSize = 14.sp,
                 color = ColdSenseTheme.colors.textSecondary
             )
