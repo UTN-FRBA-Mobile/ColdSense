@@ -63,9 +63,6 @@
     <!-- Home -->
     <string name="home_titulo">Mis heladeras</string>
     <string name="home_agregar_dispositivo">Agregar dispositivo</string>
-    <string name="home_cerrar_sesion">Cerrar sesión</string>
-    <string name="home_cerrar_sesion_titulo">¿Cerrar sesión?</string>
-    <string name="home_cerrar_sesion_mensaje">Vas a volver a la pantalla de inicio de sesión.</string>
     <string name="home_error_cargar">No se pudieron cargar las heladeras. Revisá tu conexión e intentá de nuevo.</string>
 
     <!-- Configuración -->
@@ -78,6 +75,10 @@
     <!-- Cada idioma se muestra con su nombre en ese idioma, así se reconoce aunque no entiendas el actual -->
     <string name="idioma_espanol" translatable="false">Español</string>
     <string name="idioma_ingles" translatable="false">English</string>
+    <string name="configuracion_cuenta">Cuenta</string>
+    <string name="configuracion_cerrar_sesion">Cerrar sesión</string>
+    <string name="configuracion_cerrar_sesion_titulo">¿Cerrar sesión?</string>
+    <string name="configuracion_cerrar_sesion_mensaje">Vas a volver a la pantalla de inicio de sesión.</string>
 
     <!-- Notificaciones -->
     <string name="notificaciones_canal_nombre">Alertas de temperatura</string>
