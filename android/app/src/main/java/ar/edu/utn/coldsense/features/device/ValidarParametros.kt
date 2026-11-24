@@ -1,13 +1,15 @@
 package ar.edu.utn.coldsense.features.device
 
 import ar.edu.utn.coldsense.model.ParametrosRequest
+import androidx.annotation.StringRes
+import ar.edu.utn.coldsense.R
 
 /**
  * Resultado de validar los parámetros de una heladera (límites e intervalo).
  */
 sealed interface ValidacionParametros {
     data class Ok(val request: ParametrosRequest) : ValidacionParametros
-    data class Error(val mensaje: String) : ValidacionParametros
+    data class Error(@StringRes val mensaje: Int) : ValidacionParametros
 }
 
 /**
@@ -22,18 +24,18 @@ fun validarParametros(
 ): ValidacionParametros {
 
     val minima = temperaturaMinima.aDecimal()
-        ?: return ValidacionParametros.Error("La temperatura mínima debe ser un número.")
+        ?: return ValidacionParametros.Error(R.string.validacion_minima_no_numero)
 
     val maxima = temperaturaMaxima.aDecimal()
-        ?: return ValidacionParametros.Error("La temperatura máxima debe ser un número.")
+        ?: return ValidacionParametros.Error(R.string.validacion_maxima_no_numero)
 
     if (minima > maxima) {
-        return ValidacionParametros.Error("La temperatura mínima no puede ser mayor que la máxima.")
+        return ValidacionParametros.Error(R.string.validacion_minima_mayor_que_maxima)
     }
 
     val minutos = intervalo.trim().toIntOrNull()
     if (minutos == null || minutos < 1) {
-        return ValidacionParametros.Error("El intervalo debe ser de al menos 1 minuto.")
+        return ValidacionParametros.Error(R.string.validacion_intervalo_minimo)
     }
 
     return ValidacionParametros.Ok(

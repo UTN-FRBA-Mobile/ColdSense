@@ -13,6 +13,7 @@ import ar.edu.utn.coldsense.network.HeladeraService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ar.edu.utn.coldsense.R
 
 class EditDeviceViewModel(
     private val heladeraService: HeladeraService = ApiClient.heladeraService
@@ -33,7 +34,7 @@ class EditDeviceViewModel(
     val intervalo = _intervalo.asStateFlow()
 
     // Error de validación del formulario (null = formulario válido)
-    private val _validationError = MutableStateFlow<String?>(null)
+    private val _validationError = MutableStateFlow<Int?>(null)
     val validationError = _validationError.asStateFlow()
 
     // Estados de carga y guardado
@@ -44,7 +45,7 @@ class EditDeviceViewModel(
     val isSaving = _isSaving.asStateFlow()
 
     // Mensaje de error del servidor (null = sin error)
-    private val _errorMessage = MutableStateFlow<String?>(null)
+    private val _errorMessage = MutableStateFlow<Int?>(null)
     val errorMessage = _errorMessage.asStateFlow()
 
     // Pasa a true cuando se guardó, para que la pantalla vuelva atrás
@@ -68,7 +69,7 @@ class EditDeviceViewModel(
                 _heladera.value = heladera
 
             } catch (e: Exception) {
-                _errorMessage.value = "No se pudieron cargar los parámetros. Revisá tu conexión e intentá de nuevo."
+                _errorMessage.value = R.string.editar_error_cargar
                 Log.e(TAG, "Error al cargar la heladera: ${e.message}", e)
             } finally {
                 _isLoading.value = false
@@ -119,7 +120,7 @@ class EditDeviceViewModel(
                 _isSaved.value = true
 
             } catch (e: Exception) {
-                _errorMessage.value = "No se pudieron guardar los cambios. Revisá tu conexión e intentá de nuevo."
+                _errorMessage.value = R.string.editar_error_guardar
                 Log.e(TAG, "Error al actualizar los parámetros: ${e.message}", e)
             } finally {
                 _isSaving.value = false

@@ -4,6 +4,7 @@ import ar.edu.utn.coldsense.model.ParametrosRequest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import ar.edu.utn.coldsense.R
 
 class ValidarParametrosTest {
 
@@ -31,7 +32,7 @@ class ValidarParametrosTest {
     @Test
     fun minimaMayorQueMaxima_esError() {
         assertEquals(
-            ValidacionParametros.Error("La temperatura mínima no puede ser mayor que la máxima."),
+            ValidacionParametros.Error(R.string.validacion_minima_mayor_que_maxima),
             validarParametros("8", "2", "10")
         )
     }

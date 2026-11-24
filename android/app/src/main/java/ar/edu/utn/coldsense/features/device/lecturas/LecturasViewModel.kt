@@ -12,6 +12,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ar.edu.utn.coldsense.R
 
 class LecturasViewModel(
     private val heladeraService: HeladeraService = ApiClient.heladeraService
@@ -30,7 +31,7 @@ class LecturasViewModel(
     val isLoading = _isLoading.asStateFlow()
 
     // Mensaje de error (null = sin error)
-    private val _errorMessage = MutableStateFlow<String?>(null)
+    private val _errorMessage = MutableStateFlow<Int?>(null)
     val errorMessage = _errorMessage.asStateFlow()
 
     fun loadLecturas(heladeraId: Long) {
@@ -53,7 +54,7 @@ class LecturasViewModel(
                 }
 
             } catch (e: Exception) {
-                _errorMessage.value = "No se pudo cargar el historial. Revisá tu conexión e intentá de nuevo."
+                _errorMessage.value = R.string.lecturas_error_cargar
                 Log.e(TAG, "Error al cargar las lecturas: ${e.message}", e)
             } finally {
                 _isLoading.value = false

@@ -40,6 +40,8 @@ import ar.edu.utn.coldsense.ui.components.FormField
 import ar.edu.utn.coldsense.ui.components.NextButton
 import ar.edu.utn.coldsense.ui.components.Spinner
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
 
 /*
  * ================================================================
@@ -133,35 +135,35 @@ fun EditDeviceContent(
                     )
 
                     Text(
-                        text = "Si la temperatura sale de este rango, la heladera pasa a estar en alerta.",
+                        text = stringResource(R.string.editar_ayuda_rango),
                         fontSize = 14.sp,
                         color = ColdSenseTheme.colors.textSecondary
                     )
 
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         FormField(
-                            label = "Temp. mínima (°C)",
+                            label = stringResource(R.string.campo_temp_minima),
                             value = temperaturaMinima,
                             onValueChange = viewModel::onTemperaturaMinimaChange,
-                            placeholder = "Ej: 2",
+                            placeholder = stringResource(R.string.campo_temp_minima_ejemplo),
                             keyboardType = KeyboardType.Decimal,
                             modifier = Modifier.weight(1f)
                         )
                         FormField(
-                            label = "Temp. máxima (°C)",
+                            label = stringResource(R.string.campo_temp_maxima),
                             value = temperaturaMaxima,
                             onValueChange = viewModel::onTemperaturaMaximaChange,
-                            placeholder = "Ej: 6",
+                            placeholder = stringResource(R.string.campo_temp_maxima_ejemplo),
                             keyboardType = KeyboardType.Decimal,
                             modifier = Modifier.weight(1f)
                         )
                     }
 
                     FormField(
-                        label = "Intervalo de lectura (minutos)",
+                        label = stringResource(R.string.campo_intervalo),
                         value = intervalo,
                         onValueChange = viewModel::onIntervaloChange,
-                        placeholder = "Ej: 10",
+                        placeholder = stringResource(R.string.campo_intervalo_ejemplo),
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done
                     )
@@ -169,7 +171,7 @@ fun EditDeviceContent(
                     // Error de validación del formulario
                     validationError?.let { mensaje ->
                         Text(
-                            text = mensaje,
+                            text = stringResource(mensaje),
                             fontSize = 13.sp,
                             color = ColdSenseTheme.colors.danger
                         )
@@ -184,7 +186,7 @@ fun EditDeviceContent(
                     NextButton(
                         onClick = { viewModel.guardar(heladeraId) },
                         enabled = !isSaving,
-                        text = "Guardar cambios",
+                        text = stringResource(R.string.editar_guardar),
                         isLoading = isSaving
                     )
                 }
@@ -204,9 +206,9 @@ fun EditDeviceContent(
         // Overlay de error
         errorMessage?.let { mensaje ->
             ErrorMessage(
-                errorText = mensaje,
+                errorText = stringResource(mensaje),
                 // Si nunca cargó, reintenta. Si ya hay datos (ej: falló el guardado), solo cierra.
-                buttonText = if (heladera == null) "Reintentar" else "Aceptar",
+                buttonText = stringResource(if (heladera == null) R.string.comun_reintentar else R.string.comun_aceptar),
                 onClick = {
                     if (heladera == null) viewModel.loadHeladera(heladeraId)
                     else viewModel.dismissError()
@@ -233,13 +235,13 @@ private fun EditDeviceHeader(onBack: () -> Unit) {
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Volver",
+                contentDescription = stringResource(R.string.comun_volver),
                 tint = ColdSenseTheme.colors.textPrimary
             )
         }
 
         Text(
-            text = "Editar parámetros",
+            text = stringResource(R.string.editar_titulo),
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             fontSize = 17.sp,

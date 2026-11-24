@@ -41,6 +41,9 @@ import ar.edu.utn.coldsense.ui.components.ErrorMessage
 import ar.edu.utn.coldsense.ui.components.NextButton
 import ar.edu.utn.coldsense.ui.components.Spinner
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
+import ar.edu.utn.coldsense.R
 
 /*
  * ================================================================
@@ -115,7 +118,7 @@ fun SearchDeviceContent(
         // Mensaje si hubo error
         if (isError) {
             ErrorMessage(
-                errorText = "No se pudo buscar dispositivos. Revisá tu conexión e intentá de nuevo.",
+                errorText = stringResource(R.string.buscar_error),
                 onClick = viewModel::buscar
             )
         }
@@ -139,13 +142,13 @@ private fun SearchDeviceHeader(onBack: () -> Unit) {
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Volver",
+                contentDescription = stringResource(R.string.comun_volver),
                 tint = ColdSenseTheme.colors.textPrimary
             )
         }
 
         Text(
-            text = "Agregar dispositivo",
+            text = stringResource(R.string.buscar_titulo),
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             fontSize = 17.sp,
@@ -175,7 +178,7 @@ private fun Buscando(modifier: Modifier = Modifier) {
         Spinner()
 
         Text(
-            text = "Buscando dispositivos…",
+            text = stringResource(R.string.buscar_buscando),
             fontSize = 17.sp,
             fontWeight = FontWeight.SemiBold,
             color = ColdSenseTheme.colors.textPrimary
@@ -184,7 +187,7 @@ private fun Buscando(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Asegurate de que el sensor esté encendido y cerca del bridge.",
+            text = stringResource(R.string.buscar_ayuda),
             fontSize = 14.sp,
             color = ColdSenseTheme.colors.textSecondary,
             textAlign = TextAlign.Center
@@ -209,17 +212,13 @@ private fun Resultados(
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = if (dispositivos.size == 1) {
-                    "Encontramos 1 dispositivo nuevo"
-                } else {
-                    "Encontramos ${dispositivos.size} dispositivos nuevos"
-                },
+                text = pluralStringResource(R.plurals.buscar_encontrados, dispositivos.size, dispositivos.size),
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = ColdSenseTheme.colors.textPrimary
             )
             Text(
-                text = "Tocá el dispositivo para ponerle nombre y configurarlo.",
+                text = stringResource(R.string.buscar_tocar_para_configurar),
                 fontSize = 14.sp,
                 color = ColdSenseTheme.colors.textSecondary
             )
@@ -257,7 +256,7 @@ private fun SinResultados(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "No encontramos dispositivos nuevos",
+            text = stringResource(R.string.buscar_sin_resultados),
             fontSize = 17.sp,
             fontWeight = FontWeight.SemiBold,
             color = ColdSenseTheme.colors.textPrimary
@@ -266,7 +265,7 @@ private fun SinResultados(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Revisá que el sensor esté encendido y cerca del bridge, y volvé a buscar.",
+            text = stringResource(R.string.buscar_sin_resultados_ayuda),
             fontSize = 14.sp,
             color = ColdSenseTheme.colors.textSecondary,
             textAlign = TextAlign.Center
@@ -274,6 +273,6 @@ private fun SinResultados(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        NextButton(onClick = onBuscarDeNuevo, text = "Buscar de nuevo")
+        NextButton(onClick = onBuscarDeNuevo, text = stringResource(R.string.buscar_de_nuevo))
     }
 }

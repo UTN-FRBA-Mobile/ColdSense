@@ -14,6 +14,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ar.edu.utn.coldsense.R
 
 class DetailViewModel(
     private val heladeraService: HeladeraService = ApiClient.heladeraService
@@ -32,7 +33,7 @@ class DetailViewModel(
     val isLoading = _isLoading.asStateFlow()
 
     // Mensaje de error (null = sin error)
-    private val _errorMessage = MutableStateFlow<String?>(null)
+    private val _errorMessage = MutableStateFlow<Int?>(null)
     val errorMessage = _errorMessage.asStateFlow()
 
     // Gráfico de temperatura del período elegido
@@ -79,7 +80,7 @@ class DetailViewModel(
             } catch (e: Exception) {
                 // Si falla un refresco sigo mostrando lo último que se cargó
                 if (primeraCarga)
-                    _errorMessage.value = "No se pudo cargar el detalle de la heladera. Revisá tu conexión e intentá de nuevo."
+                    _errorMessage.value = R.string.detalle_error_cargar
                 Log.e(TAG, "Error al cargar el detalle: ${e.message}", e)
             } finally {
                 _isLoading.value = false
@@ -172,7 +173,7 @@ class DetailViewModel(
                 _isDeleted.value = true
 
             } catch (e: Exception) {
-                _errorMessage.value = "No se pudo eliminar el dispositivo. Intentá de nuevo."
+                _errorMessage.value = R.string.detalle_error_eliminar
                 Log.e(TAG, "Error al eliminar: ${e.message}", e)
             } finally {
                 _isDeleting.value = false

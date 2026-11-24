@@ -1,0 +1,171 @@
+<resources>
+    <!-- Comunes -->
+    <string name="comun_volver">Back</string>
+    <string name="comun_cancelar">Cancel</string>
+    <string name="comun_continuar">Continue</string>
+    <string name="comun_reintentar">Retry</string>
+    <string name="comun_configuracion">Settings</string>
+    <string name="comun_aceptar">OK</string>
+
+    <!-- Mensaje de error y diálogo de confirmación -->
+    <string name="error_titulo">Something went wrong</string>
+    <string name="error_icono">Error</string>
+    <string name="error_inesperado">An unexpected error occurred. Please try again.</string>
+    <string name="confirmar_icono">Warning</string>
+    <string name="eliminar_dispositivo_titulo">Delete device?</string>
+    <string name="eliminar_dispositivo_mensaje">This action can\'t be undone. The fridge and all its reading history will be deleted.</string>
+    <string name="eliminar_dispositivo_confirmar">Delete</string>
+
+    <!-- Barra de navegación -->
+    <string name="nav_inicio">Home</string>
+    <string name="nav_estadisticas">Statistics</string>
+    <string name="nav_notificaciones">Notifications</string>
+
+    <!-- Estado de la heladera -->
+    <string name="estado_normal">Normal</string>
+    <string name="estado_en_alerta">Alert</string>
+    <string name="estado_sin_conexion">Offline</string>
+
+    <!-- Última lectura -->
+    <string name="ultima_lectura_sin_datos">no data</string>
+    <string name="ultima_lectura_hoy">today %1$s</string>
+
+    <!-- Login -->
+    <string name="login_subtitulo">Monitor the status of your fridges</string>
+    <string name="login_subtitulo_registro">Create an account to continue</string>
+    <string name="login_email">Email</string>
+    <string name="login_contrasena">Password</string>
+    <string name="login_contrasena_ayuda">Use at least 6 characters</string>
+    <string name="login_iniciar_sesion">Sign in</string>
+    <string name="login_crear_cuenta">Create account</string>
+    <string name="login_separador">or</string>
+    <string name="login_continuar_con_google">Continue with Google</string>
+    <string name="login_ir_a_registro">Don\'t have an account? Sign up</string>
+    <string name="login_ir_a_inicio_sesion">Already have an account? Sign in</string>
+
+    <!-- Errores de login -->
+    <string name="login_error_completar_campos">Enter your email and password</string>
+    <string name="login_error_email_invalido">Enter a valid email</string>
+    <string name="login_error_contrasena_corta">The password must be at least 6 characters long</string>
+    <string name="login_error_email_en_uso">An account with that email already exists</string>
+    <string name="login_error_credenciales">The email or password is incorrect</string>
+    <string name="login_error_demasiados_intentos">Too many attempts. Try again later.</string>
+    <string name="login_error_metodo_deshabilitado">Enable this sign-in method in Firebase.</string>
+    <string name="login_error_sin_conexion">Couldn\'t connect. Check your connection.</string>
+    <string name="login_error_firebase_sin_configurar">Firebase isn\'t configured. Add google-services.json to the Android module.</string>
+    <string name="login_error_google">Couldn\'t sign in with Google. Try again.</string>
+    <string name="login_error_google_sin_cliente">The web OAuth client is missing. Download the updated google-services.json from Firebase.</string>
+    <string name="login_error_google_credencial">Google returned an incompatible credential.</string>
+    <string name="login_error_generico">Couldn\'t complete the operation. Try again.</string>
+
+    <!-- Home -->
+    <string name="home_titulo">My fridges</string>
+    <string name="home_agregar_dispositivo">Add device</string>
+    <string name="home_cerrar_sesion">Sign out</string>
+    <string name="home_cerrar_sesion_titulo">Sign out?</string>
+    <string name="home_cerrar_sesion_mensaje">You\'ll go back to the sign-in screen.</string>
+    <string name="home_error_cargar">Couldn\'t load the fridges. Check your connection and try again.</string>
+
+    <!-- Configuración -->
+    <string name="configuracion_apariencia">Appearance</string>
+    <string name="tema_sistema">Same as the phone</string>
+    <string name="tema_claro">Light</string>
+    <string name="tema_oscuro">Dark</string>
+
+    <!-- Notificaciones -->
+    <string name="notificaciones_canal_nombre">Temperature alerts</string>
+    <string name="notificaciones_canal_descripcion">Alerts when a fridge goes out of range or loses connection</string>
+
+    <!-- Validaciones de los formularios -->
+    <string name="validacion_nombre_vacio">Enter a name for the device.</string>
+    <string name="validacion_minima_no_numero">The minimum temperature must be a number.</string>
+    <string name="validacion_maxima_no_numero">The maximum temperature must be a number.</string>
+    <string name="validacion_minima_mayor_que_maxima">The minimum temperature can\'t be higher than the maximum.</string>
+    <string name="validacion_intervalo_minimo">The interval must be at least 1 minute.</string>
+
+    <!-- Campos de los formularios -->
+    <string name="campo_nombre">Name</string>
+    <string name="campo_nombre_ejemplo">E.g.: Bar fridge</string>
+    <string name="campo_temp_minima">Min. temp. (°C)</string>
+    <string name="campo_temp_minima_ejemplo">E.g.: 2</string>
+    <string name="campo_temp_maxima">Max. temp. (°C)</string>
+    <string name="campo_temp_maxima_ejemplo">E.g.: 6</string>
+    <string name="campo_intervalo">Reading interval (minutes)</string>
+    <string name="campo_intervalo_ejemplo">E.g.: 10</string>
+
+    <!-- Búsqueda de dispositivos -->
+    <string name="buscar_titulo">Add device</string>
+    <string name="buscar_buscando">Searching for devices…</string>
+    <string name="buscar_ayuda">Make sure the sensor is on and close to the bridge.</string>
+    <plurals name="buscar_encontrados">
+        <item quantity="one">We found %d new device</item>
+        <item quantity="other">We found %d new devices</item>
+    </plurals>
+    <string name="buscar_tocar_para_configurar">Tap the device to name and set it up.</string>
+    <string name="buscar_sin_resultados">We didn\'t find any new devices</string>
+    <string name="buscar_sin_resultados_ayuda">Check that the sensor is on and close to the bridge, then search again.</string>
+    <string name="buscar_de_nuevo">Search again</string>
+    <string name="buscar_error">Couldn\'t search for devices. Check your connection and try again.</string>
+    <string name="dispositivo_numero_serie">Serial no.: %1$s</string>
+    <string name="dispositivo_lectura_actual">Current reading: %1$s</string>
+
+    <!-- Alta de dispositivo -->
+    <string name="agregar_titulo">Set up device</string>
+    <string name="agregar_descripcion">Give it a name and set the limits of the fridge where you installed the sensor.</string>
+    <string name="agregar_guardar">Save device</string>
+    <string name="agregar_error">Couldn\'t add the device. Check your connection and try again.</string>
+
+    <!-- Edición de parámetros -->
+    <string name="editar_titulo">Edit settings</string>
+    <string name="editar_ayuda_rango">If the temperature goes out of this range, the fridge goes into alert.</string>
+    <string name="editar_guardar">Save changes</string>
+    <string name="editar_error_cargar">Couldn\'t load the settings. Check your connection and try again.</string>
+    <string name="editar_error_guardar">Couldn\'t save the changes. Check your connection and try again.</string>
+
+    <!-- Detalle de la heladera -->
+    <string name="detalle_estado_actual">Current status</string>
+    <string name="detalle_ultima_lectura">Last reading: %1$s</string>
+    <string name="detalle_rango_configurado">Configured range</string>
+    <string name="detalle_minima">Min:</string>
+    <string name="detalle_maxima">Max:</string>
+    <string name="detalle_estado_sensor">Sensor status</string>
+    <string name="detalle_sensor_conectado">Connected</string>
+    <string name="detalle_bateria">Battery: %1$s</string>
+    <string name="detalle_ultimas_lecturas">Latest readings</string>
+    <string name="detalle_ver_todas">See all</string>
+    <string name="detalle_eliminar">Delete device</string>
+    <string name="detalle_error_cargar">Couldn\'t load the fridge details. Check your connection and try again.</string>
+    <string name="detalle_error_eliminar">Couldn\'t delete the device. Try again.</string>
+    <string name="lecturas_vacio">No readings recorded yet.</string>
+
+    <!-- Gráfico de temperatura -->
+    <string name="serie_promedio">Average</string>
+    <string name="serie_maxima">Maximum</string>
+    <string name="serie_minima">Minimum</string>
+    <string name="periodo_1_hora">1 hour</string>
+    <string name="periodo_24_horas">24 hours</string>
+    <string name="periodo_7_dias">7 days</string>
+    <string name="periodo_1_mes">1 month</string>
+    <string name="grafico_valores_por_hora">Values per hour</string>
+    <string name="grafico_valores_por_6_horas">Values per 6 hours</string>
+    <string name="grafico_valores_por_dia">Values per day</string>
+    <string name="grafico_error">Couldn\'t load the chart.\nTap to retry.</string>
+    <string name="grafico_sin_lecturas">No readings in this period</string>
+    <string name="grafico_limite_maximo">Max %1$s</string>
+    <string name="grafico_limite_minimo">Min %1$s</string>
+
+    <!-- Historial de lecturas -->
+    <string name="lecturas_titulo">Reading history</string>
+    <string name="lecturas_error_cargar">Couldn\'t load the history. Check your connection and try again.</string>
+    <string name="lecturas_rango_configurado">Configured range: %1$s to %2$s</string>
+    <plurals name="lecturas_resumen">
+        <item quantity="one">Summary of the last reading</item>
+        <item quantity="other">Summary of the last %d readings</item>
+    </plurals>
+    <string name="lecturas_todas_en_rango">All readings were within range.</string>
+    <plurals name="lecturas_fuera_de_rango">
+        <item quantity="one">%d reading out of range.</item>
+        <item quantity="other">%d readings out of range.</item>
+    </plurals>
+    <string name="lecturas_fuera_de_rango_icono">Out of range</string>
+</resources>
