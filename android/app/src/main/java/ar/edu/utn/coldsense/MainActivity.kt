@@ -8,6 +8,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import ar.edu.utn.coldsense.features.auth.LoginScreen
 import ar.edu.utn.coldsense.notifications.crearCanalAlertas
@@ -38,7 +42,13 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppTheme {
-                Navigator(LoginScreen())
+                // Fondo y color de texto del tema para todas las pantallas
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    Navigator(LoginScreen())
+                }
             }
         }
     }
