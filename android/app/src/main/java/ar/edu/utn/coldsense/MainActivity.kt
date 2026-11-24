@@ -1,18 +1,25 @@
 package ar.edu.utn.coldsense
 
 import android.Manifest
+import android.graphics.Color
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
+import ar.edu.utn.coldsense.data.preferencias.PreferenciasTema
 import ar.edu.utn.coldsense.features.auth.LoginScreen
 import ar.edu.utn.coldsense.notifications.crearCanalAlertas
 import ar.edu.utn.coldsense.ui.theme.AppTheme
@@ -28,6 +35,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // Tema elegido por el usuario (claro, oscuro o el del celular)
+        PreferenciasTema.init(this)
+
         // El canal tiene que existir antes de que llegue la primera alerta
         crearCanalAlertas(this)
 
@@ -41,7 +51,18 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            AppTheme {
+            val modoTema by PreferenciasTema.modo.collectAsState()
+            val darkTheme = modoTema.esOscuro(isSystemInDarkTheme())
+
+            // Los íconos de la barra de estado siguen al tema de la app, no al del celular
+            LaunchedEffect(darkTheme) {
+                enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { darkTheme },
+                    navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { darkTheme }
+                )
+            }
+
+            AppTheme(darkTheme = darkTheme) {
                 // Fondo y color de texto del tema para todas las pantallas
                 Surface(
                     modifier = Modifier.fillMaxSize(),
