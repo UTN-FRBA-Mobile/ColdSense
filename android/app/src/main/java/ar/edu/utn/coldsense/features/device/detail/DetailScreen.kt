@@ -74,6 +74,7 @@ import ar.edu.utn.coldsense.utils.formatLimite
 import ar.edu.utn.coldsense.utils.formatTemperature
 import ar.edu.utn.coldsense.utils.formatUltimaLectura
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.compose.ui.res.stringResource
 
 /*
  * ================================================================
@@ -378,7 +379,7 @@ private fun EstadoActualCard(status: HeladeraStatus) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = status.label,
+                    text = stringResource(status.label),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
                     color = ColdSenseTheme.colors.textPrimary

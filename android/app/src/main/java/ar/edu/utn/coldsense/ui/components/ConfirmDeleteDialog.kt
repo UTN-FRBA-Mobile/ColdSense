@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
 
 /**
  * Diálogo de confirmación para eliminar, con el mismo estilo que ErrorMessage.
@@ -40,9 +42,9 @@ import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
  */
 @Composable
 fun ConfirmDeleteDialog(
-    title: String = "¿Eliminar dispositivo?",
-    message: String = "Esta acción no se puede deshacer. Se eliminará la heladera y todo su historial de lecturas asociado.",
-    confirmText: String = "Eliminar",
+    title: String = stringResource(R.string.eliminar_dispositivo_titulo),
+    message: String = stringResource(R.string.eliminar_dispositivo_mensaje),
+    confirmText: String = stringResource(R.string.eliminar_dispositivo_confirmar),
     isLoading: Boolean = false,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
@@ -78,7 +80,7 @@ fun ConfirmDeleteDialog(
             // Ícono "!"
             Icon(
                 imageVector = Icons.Default.Error,
-                contentDescription = "Advertencia",
+                contentDescription = stringResource(R.string.confirmar_icono),
                 tint = errorColor,
                 modifier = Modifier.size(56.dp)
             )
@@ -148,7 +150,7 @@ fun ConfirmDeleteDialog(
                         disabledContentColor = titleColor.copy(alpha = 0.5f)
                     )
                 ) {
-                    Text(text = "Cancelar", fontWeight = FontWeight.Bold)
+                    Text(text = stringResource(R.string.comun_cancelar), fontWeight = FontWeight.Bold)
                 }
             }
         }

@@ -35,20 +35,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
 
 /**
  * Destinos disponibles en la barra de navegación inferior.
  *
- * @param label Texto que se muestra debajo del ícono.
+ * @param label Texto que se muestra debajo del ícono (recurso de strings.xml).
  * @param icon Ícono que representa al destino.
  */
 enum class BottomNavDestination(
-    val label: String,
+    @StringRes val label: Int,
     val icon: ImageVector
 ) {
-    Home("Inicio", Icons.Default.Home),
-    Stats("Estadísticas", Icons.Default.BarChart),
-    Notifications("Notificaciones", Icons.Default.Notifications)
+    Home(R.string.nav_inicio, Icons.Default.Home),
+    Stats(R.string.nav_estadisticas, Icons.Default.BarChart),
+    Notifications(R.string.nav_notificaciones, Icons.Default.Notifications)
 }
 
 /**
@@ -186,14 +189,14 @@ private fun NavigationItem(
             // Ícono del destino
             Icon(
                 imageVector = destination.icon,
-                contentDescription = destination.label,
+                contentDescription = stringResource(destination.label),
                 tint = tint,
                 modifier = Modifier.size(26.dp)
             )
 
             // Texto del destino
             Text(
-                text = destination.label,
+                text = stringResource(destination.label),
                 fontSize = 11.sp,
                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
                 color = tint,

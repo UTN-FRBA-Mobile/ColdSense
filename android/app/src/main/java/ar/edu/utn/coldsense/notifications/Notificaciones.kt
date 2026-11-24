@@ -18,15 +18,15 @@ const val CANAL_ALERTAS = "alertas_temperatura"
 
 /**
  * Crea el canal de las alertas (Android pide un canal para mostrar notificaciones).
- * Si ya existe no hace nada, así que se puede llamar siempre.
+ * Si ya existe solo le actualiza el nombre (por si cambió el idioma), así que se puede llamar siempre.
  */
 fun crearCanalAlertas(context: Context) {
     val canal = NotificationChannel(
         CANAL_ALERTAS,
-        "Alertas de temperatura",
+        context.getString(R.string.notificaciones_canal_nombre),
         NotificationManager.IMPORTANCE_HIGH
     ).apply {
-        description = "Avisos cuando una heladera sale de rango o pierde conexión"
+        description = context.getString(R.string.notificaciones_canal_descripcion)
     }
     context.getSystemService(NotificationManager::class.java).createNotificationChannel(canal)
 }

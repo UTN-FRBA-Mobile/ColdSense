@@ -8,21 +8,23 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.annotation.StringRes
+import ar.edu.utn.coldsense.R
 
 enum class HeladeraStatus(
-    val label: String,
+    @StringRes val label: Int,
     val signalIcon: ImageVector
 ) {
     Normal(
-        label = "Normal",
+        label = R.string.estado_normal,
         signalIcon = Icons.Default.Wifi
     ),
     Alert(
-        label = "En alerta",
+        label = R.string.estado_en_alerta,
         signalIcon = Icons.Default.Wifi
     ),
     Disconnected(
-        label = "Sin conexión",
+        label = R.string.estado_sin_conexion,
         signalIcon = Icons.Default.WifiOff
     )
 }

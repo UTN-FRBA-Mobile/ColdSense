@@ -1,3 +1,79 @@
 <resources>
     <string name="app_name">App</string>
+
+    <!-- Comunes -->
+    <string name="comun_volver">Volver</string>
+    <string name="comun_cancelar">Cancelar</string>
+    <string name="comun_continuar">Continuar</string>
+    <string name="comun_reintentar">Reintentar</string>
+    <string name="comun_configuracion">Configuración</string>
+
+    <!-- Mensaje de error y diálogo de confirmación -->
+    <string name="error_titulo">Algo salió mal</string>
+    <string name="error_icono">Error</string>
+    <string name="error_inesperado">Ocurrió un error inesperado. Por favor, inténtelo de nuevo.</string>
+    <string name="confirmar_icono">Advertencia</string>
+    <string name="eliminar_dispositivo_titulo">¿Eliminar dispositivo?</string>
+    <string name="eliminar_dispositivo_mensaje">Esta acción no se puede deshacer. Se eliminará la heladera y todo su historial de lecturas asociado.</string>
+    <string name="eliminar_dispositivo_confirmar">Eliminar</string>
+
+    <!-- Barra de navegación -->
+    <string name="nav_inicio">Inicio</string>
+    <string name="nav_estadisticas">Estadísticas</string>
+    <string name="nav_notificaciones">Notificaciones</string>
+
+    <!-- Estado de la heladera -->
+    <string name="estado_normal">Normal</string>
+    <string name="estado_en_alerta">En alerta</string>
+    <string name="estado_sin_conexion">Sin conexión</string>
+
+    <!-- Última lectura -->
+    <string name="ultima_lectura_sin_datos">sin datos</string>
+    <string name="ultima_lectura_hoy">hoy %1$s</string>
+
+    <!-- Login -->
+    <string name="login_subtitulo">Monitoreá el estado de tus heladeras</string>
+    <string name="login_subtitulo_registro">Creá una cuenta para continuar</string>
+    <string name="login_email">Email</string>
+    <string name="login_contrasena">Contraseña</string>
+    <string name="login_contrasena_ayuda">Usá al menos 6 caracteres</string>
+    <string name="login_iniciar_sesion">Iniciar sesión</string>
+    <string name="login_crear_cuenta">Crear cuenta</string>
+    <string name="login_separador">o</string>
+    <string name="login_continuar_con_google">Continuar con Google</string>
+    <string name="login_ir_a_registro">¿No tenés cuenta? Registrate</string>
+    <string name="login_ir_a_inicio_sesion">¿Ya tenés cuenta? Iniciá sesión</string>
+
+    <!-- Errores de login -->
+    <string name="login_error_completar_campos">Completá email y contraseña</string>
+    <string name="login_error_email_invalido">Ingresá un email válido</string>
+    <string name="login_error_contrasena_corta">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="login_error_email_en_uso">Ya existe una cuenta con ese email</string>
+    <string name="login_error_credenciales">El email o la contraseña son incorrectos</string>
+    <string name="login_error_demasiados_intentos">Hubo demasiados intentos. Probá de nuevo más tarde.</string>
+    <string name="login_error_metodo_deshabilitado">Habilitá este método de acceso en Firebase.</string>
+    <string name="login_error_sin_conexion">No se pudo conectar. Revisá tu conexión.</string>
+    <string name="login_error_firebase_sin_configurar">Firebase no está configurado. Agregá google-services.json al módulo Android.</string>
+    <string name="login_error_google">No se pudo iniciar sesión con Google. Intentá de nuevo.</string>
+    <string name="login_error_google_sin_cliente">Falta el cliente OAuth web. Descargá el google-services.json actualizado de Firebase.</string>
+    <string name="login_error_google_credencial">Google devolvió una credencial incompatible.</string>
+    <string name="login_error_generico">No se pudo completar la operación. Intentá de nuevo.</string>
+
+    <!-- Home -->
+    <string name="home_titulo">Mis heladeras</string>
+    <string name="home_agregar_dispositivo">Agregar dispositivo</string>
+    <string name="home_cerrar_sesion">Cerrar sesión</string>
+    <string name="home_cerrar_sesion_titulo">¿Cerrar sesión?</string>
+    <string name="home_cerrar_sesion_mensaje">Vas a volver a la pantalla de inicio de sesión.</string>
+    <string name="home_error_cargar">No se pudieron cargar las heladeras. Revisá tu conexión e intentá de nuevo.</string>
+
+    <!-- Configuración -->
+    <string name="configuracion_apariencia">Apariencia</string>
+    <string name="tema_sistema">Igual que el celular</string>
+    <string name="tema_claro">Claro</string>
+    <string name="tema_oscuro">Oscuro</string>
+
+    <!-- Notificaciones -->
+    <string name="notificaciones_canal_nombre">Alertas de temperatura</string>
+    <string name="notificaciones_canal_descripcion">Avisos cuando una heladera sale de rango o pierde conexión</string>
 </resources>
