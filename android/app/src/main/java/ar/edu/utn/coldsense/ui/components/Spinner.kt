@@ -10,16 +10,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 /**
  * Componente reutilizable que muestra un indicador de carga centrado.
  *
- * @param color Color del indicador de carga. Por defecto es azul (#0878D1).
+ * @param color Color del indicador de carga. Por defecto es el color principal del tema.
  * @param paddingVertical Espaciado vertical alrededor del indicador de carga. Por defecto es 16.dp.
  */
 @Composable
 fun Spinner(
-    color: Color = Color(0xFF0878D1),
+    color: Color = ColdSenseTheme.colors.primary,
     paddingVertical: Dp = 16.dp
 ) {
     Box(

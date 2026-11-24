@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 /**
  * Diálogo de confirmación para eliminar, con el mismo estilo que ErrorMessage.
@@ -47,10 +48,11 @@ fun ConfirmDeleteDialog(
     onDismiss: () -> Unit
 ) {
     // Misma paleta que ErrorMessage
-    val errorColor = Color(0xFFE57373)
-    val cardBackground = Color(0xFFFFDADA)
-    val titleColor = Color(0xFF8B1A1A)
-    val messageColor = Color(0xFF6D3030)
+    val colors = ColdSenseTheme.colors
+    val errorColor = colors.errorDialogAccent
+    val cardBackground = colors.errorDialogBackground
+    val titleColor = colors.errorDialogTitle
+    val messageColor = colors.errorDialogText
 
     Dialog(onDismissRequest = { if (!isLoading) onDismiss() }) {
 
@@ -140,9 +142,9 @@ fun ConfirmDeleteDialog(
                         .height(48.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
+                        containerColor = colors.errorDialogSecondaryButton,
                         contentColor = titleColor,
-                        disabledContainerColor = Color.White.copy(alpha = 0.6f),
+                        disabledContainerColor = colors.errorDialogSecondaryButton.copy(alpha = 0.6f),
                         disabledContentColor = titleColor.copy(alpha = 0.5f)
                     )
                 ) {

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Con el celular en modo oscuro, la ventana arranca oscura y no hay destello blanco al abrir -->
+    <style name="Theme.App" parent="android:Theme.Material.NoActionBar" />
+</resources>

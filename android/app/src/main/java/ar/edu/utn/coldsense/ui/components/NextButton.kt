@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 /**
  * Componente reutilizable para avanzar a la siguiente acción.
@@ -34,7 +35,10 @@ fun NextButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(54.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF69B3D5))
+        colors = ButtonDefaults.buttonColors(
+            containerColor = ColdSenseTheme.colors.actionButton,
+            contentColor = Color.White
+        )
     ) {
         if (isLoading) {
             Spinner(color = Color.White)

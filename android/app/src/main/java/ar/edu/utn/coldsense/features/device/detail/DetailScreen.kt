@@ -61,6 +61,9 @@ import ar.edu.utn.coldsense.model.Heladera
 import ar.edu.utn.coldsense.model.HeladeraStatus
 import ar.edu.utn.coldsense.model.Lectura
 import ar.edu.utn.coldsense.model.calcularEstado
+import ar.edu.utn.coldsense.model.chipBackground
+import ar.edu.utn.coldsense.model.color
+import ar.edu.utn.coldsense.model.signalColor
 import ar.edu.utn.coldsense.notifications.CambiosHeladeras
 import ar.edu.utn.coldsense.ui.components.ConfirmDeleteDialog
 import ar.edu.utn.coldsense.ui.components.ErrorMessage
