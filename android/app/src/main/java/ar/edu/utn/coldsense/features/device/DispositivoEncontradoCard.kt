@@ -23,17 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ar.edu.utn.coldsense.model.DispositivoEncontrado
 import ar.edu.utn.coldsense.utils.formatTemperature
-
-private val TextPrimary = Color(0xFF1A1F36)
-private val TextSecondary = Color(0xFF6B7280)
-private val PrimaryBlue = Color(0xFF1E6FE0)
-private val CardBorder = Color(0xFFE5E8EF)
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 /**
  * Tarjeta de un sensor encontrado en la búsqueda.
@@ -51,7 +46,7 @@ fun DispositivoEncontradoCard(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .border(BorderStroke(1.dp, CardBorder), RoundedCornerShape(16.dp))
+            .border(BorderStroke(1.dp, ColdSenseTheme.colors.border), RoundedCornerShape(16.dp))
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -60,13 +55,13 @@ fun DispositivoEncontradoCard(
             modifier = Modifier
                 .size(56.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(PrimaryBlue.copy(alpha = 0.10f)),
+                .background(ColdSenseTheme.colors.primary.copy(alpha = 0.10f)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.DeviceThermostat,
                 contentDescription = null,
-                tint = PrimaryBlue,
+                tint = ColdSenseTheme.colors.primary,
                 modifier = Modifier.size(32.dp)
             )
         }
@@ -81,18 +76,18 @@ fun DispositivoEncontradoCard(
                 text = dispositivo.modelo,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary,
+                color = ColdSenseTheme.colors.textPrimary,
                 maxLines = 1
             )
             Text(
                 text = "N° de serie: ${dispositivo.numeroSerie}",
                 fontSize = 13.sp,
-                color = TextSecondary
+                color = ColdSenseTheme.colors.textSecondary
             )
             Text(
                 text = "Lectura actual: ${formatTemperature(dispositivo.temperaturaActual)}",
                 fontSize = 13.sp,
-                color = TextSecondary
+                color = ColdSenseTheme.colors.textSecondary
             )
         }
 
@@ -100,7 +95,7 @@ fun DispositivoEncontradoCard(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = TextSecondary
+                tint = ColdSenseTheme.colors.textSecondary
             )
         }
     }

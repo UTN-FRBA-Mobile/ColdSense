@@ -23,6 +23,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,22 +52,24 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
-// Colores del gráfico
-private val TextPrimary = Color(0xFF1A1F36)
-private val TextSecondary = Color(0xFF6B7280)
-private val PrimaryBlue = Color(0xFF1E6FE0)
-private val CardBorder = Color(0xFFE5E8EF)
-private val SurfaceGray = Color(0xFFF5F6F8)
-private val GridGray = Color(0xFFEDEFF3)
-private val LimiteRed = Color(0xFFEF4444)
-
-/** Líneas que se pueden mostrar en el gráfico, cada una con su color. */
-enum class SerieGrafico(val label: String, val color: Color, val valor: (PuntoGrafico) -> Double) {
-    Promedio("Promedio", Color(0xFF1E6FE0), { it.promedio }),
-    Maxima("Máxima", Color(0xFFF59E0B), { it.maxima }),
-    Minima("Mínima", Color(0xFF0EA5A4), { it.minima })
+/** Líneas que se pueden mostrar en el gráfico. */
+enum class SerieGrafico(val label: String, val valor: (PuntoGrafico) -> Double) {
+    Promedio("Promedio", { it.promedio }),
+    Maxima("Máxima", { it.maxima }),
+    Minima("Mínima", { it.minima })
 }
+
+/** Color de cada línea según el tema (claro u oscuro). */
+val SerieGrafico.color: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = when (this) {
+        SerieGrafico.Promedio -> ColdSenseTheme.colors.primary
+        SerieGrafico.Maxima -> ColdSenseTheme.colors.chartMax
+        SerieGrafico.Minima -> ColdSenseTheme.colors.chartMin
+    }
 
 private const val UNA_HORA = 60 * 60 * 1000L
 private const val UN_DIA = 24 * UNA_HORA
@@ -166,7 +169,7 @@ fun GraficoSection(
                 .fillMaxWidth()
                 .height(220.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .border(1.dp, CardBorder, RoundedCornerShape(12.dp))
+                .border(1.dp, ColdSenseTheme.colors.border, RoundedCornerShape(12.dp))
                 .padding(12.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -176,7 +179,7 @@ fun GraficoSection(
                 state.hasError -> Text(
                     text = "No se pudo cargar el gráfico.\nTocá para reintentar.",
                     fontSize = 14.sp,
-                    color = TextSecondary,
+                    color = ColdSenseTheme.colors.textSecondary,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
@@ -200,10 +203,10 @@ fun GraficoSection(
                         Text(
                             text = "Sin lecturas en este período",
                             fontSize = 14.sp,
-                            color = TextSecondary,
+                            color = ColdSenseTheme.colors.textSecondary,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color.White)
+                                .background(ColdSenseTheme.colors.surface)
                                 .padding(horizontal = 8.dp, vertical = 4.dp)
                         )
                     }
@@ -219,7 +222,7 @@ fun GraficoSection(
             Text(
                 text = "Valores por $bloque",
                 fontSize = 12.sp,
-                color = TextSecondary,
+                color = ColdSenseTheme.colors.textSecondary,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
@@ -246,10 +249,10 @@ private fun SerieSelector(
             Row(
                 modifier = Modifier
                     .clip(RoundedCornerShape(50))
-                    .background(if (activa) serie.color.copy(alpha = 0.12f) else SurfaceGray)
+                    .background(if (activa) serie.color.copy(alpha = 0.12f) else ColdSenseTheme.colors.surfaceMuted)
                     .border(
                         width = 1.dp,
-                        color = if (activa) serie.color else CardBorder,
+                        color = if (activa) serie.color else ColdSenseTheme.colors.border,
                         shape = RoundedCornerShape(50)
                     )
                     .toggleable(
@@ -264,14 +267,14 @@ private fun SerieSelector(
                     modifier = Modifier
                         .size(width = 14.dp, height = 3.dp)
                         .clip(RoundedCornerShape(2.dp))
-                        .background(if (activa) serie.color else TextSecondary.copy(alpha = 0.4f))
+                        .background(if (activa) serie.color else ColdSenseTheme.colors.textSecondary.copy(alpha = 0.4f))
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = serie.label,
                     fontSize = 13.sp,
                     fontWeight = if (activa) FontWeight.SemiBold else FontWeight.Medium,
-                    color = if (activa) TextPrimary else TextSecondary
+                    color = if (activa) ColdSenseTheme.colors.textPrimary else ColdSenseTheme.colors.textSecondary
                 )
             }
         }
@@ -303,7 +306,7 @@ private fun PeriodoSelector(
                     .fillMaxHeight()
                     .heightIn(min = 40.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(if (isSelected) PrimaryBlue else SurfaceGray)
+                    .background(if (isSelected) ColdSenseTheme.colors.primary else ColdSenseTheme.colors.surfaceMuted)
                     .selectable(
                         selected = isSelected,
                         onClick = { onClick(periodo) },
@@ -317,7 +320,7 @@ private fun PeriodoSelector(
                     fontSize = 12.sp,
                     lineHeight = 14.sp,
                     fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
-                    color = if (isSelected) Color.White else TextPrimary,
+                    color = if (isSelected) ColdSenseTheme.colors.onPrimary else ColdSenseTheme.colors.textPrimary,
                     textAlign = TextAlign.Center,
                     maxLines = 2
                 )
@@ -344,8 +347,10 @@ private fun GraficoTemperatura(
     modifier: Modifier = Modifier
 ) {
     val textMeasurer = rememberTextMeasurer()
-    val ejeStyle = TextStyle(fontSize = 10.sp, color = TextSecondary)
-    val limiteStyle = TextStyle(fontSize = 10.sp, color = LimiteRed, fontWeight = FontWeight.SemiBold)
+    val colorGrilla = ColdSenseTheme.colors.grid
+    val colorLimite = ColdSenseTheme.colors.danger
+    val ejeStyle = TextStyle(fontSize = 10.sp, color = ColdSenseTheme.colors.textSecondary)
+    val limiteStyle = TextStyle(fontSize = 10.sp, color = colorLimite, fontWeight = FontWeight.SemiBold)
 
     // Puntos a dibujar: cada lectura en "1 hora", bloques en el resto
     val puntos = remember(lecturas, periodo) { agruparLecturas(lecturas, periodo) }
@@ -356,6 +361,7 @@ private fun GraficoTemperatura(
     } else {
         SerieGrafico.entries.filter { it in series }
     }
+    val coloresSeries = SerieGrafico.entries.associateWith { it.color }
 
     Canvas(modifier = modifier) {
         if (hasta <= desde) return@Canvas
@@ -391,7 +397,7 @@ private fun GraficoTemperatura(
         // Grilla + etiquetas Y
         ticksY.forEachIndexed { i, valor ->
             val y = yDe(valor)
-            drawLine(GridGray, Offset(left, y), Offset(right, y), strokeWidth = 1.dp.toPx())
+            drawLine(colorGrilla, Offset(left, y), Offset(right, y), strokeWidth = 1.dp.toPx())
             val etiqueta = etiquetasY[i]
             drawText(
                 etiqueta,
@@ -419,9 +425,9 @@ private fun GraficoTemperatura(
 
         // Líneas de temperatura máxima y mínima configuradas
         dibujarLimite(textMeasurer, "Máx ${formatLimite(temperaturaMaxima)}", yDe(temperaturaMaxima),
-            left, right, limiteStyle, etiquetaArriba = true)
+            left, right, colorLimite, limiteStyle, etiquetaArriba = true)
         dibujarLimite(textMeasurer, "Mín ${formatLimite(temperaturaMinima)}", yDe(temperaturaMinima),
-            left, right, limiteStyle, etiquetaArriba = false)
+            left, right, colorLimite, limiteStyle, etiquetaArriba = false)
 
         // Separo los puntos en tramos continuos. Si entre dos puntos pasó mucho más de lo
         // esperado (sensor desconectado), corto las líneas para no inventar datos.
@@ -451,7 +457,7 @@ private fun GraficoTemperatura(
             }
             drawPath(
                 path = path,
-                color = serie.color,
+                color = coloresSeries.getValue(serie),
                 style = Stroke(width = 2.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round)
             )
 
@@ -459,7 +465,7 @@ private fun GraficoTemperatura(
             if (puntos.size <= 40) {
                 puntos.forEach { punto ->
                     drawCircle(
-                        color = serie.color,
+                        color = coloresSeries.getValue(serie),
                         radius = 3.dp.toPx(),
                         center = Offset(xDe(punto.fecha), yDe(serie.valor(punto)))
                     )
@@ -475,11 +481,12 @@ private fun DrawScope.dibujarLimite(
     y: Float,
     left: Float,
     right: Float,
+    color: Color,
     style: TextStyle,
     etiquetaArriba: Boolean
 ) {
     drawLine(
-        color = LimiteRed,
+        color = color,
         start = Offset(left, y),
         end = Offset(right, y),
         strokeWidth = 1.5.dp.toPx(),

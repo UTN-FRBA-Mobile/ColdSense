@@ -27,7 +27,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -40,10 +39,7 @@ import ar.edu.utn.coldsense.ui.components.ErrorMessage
 import ar.edu.utn.coldsense.ui.components.FormField
 import ar.edu.utn.coldsense.ui.components.NextButton
 import ar.edu.utn.coldsense.ui.components.Spinner
-
-private val TextPrimary = Color(0xFF1A1F36)
-private val TextSecondary = Color(0xFF6B7280)
-private val DangerRed = Color(0xFFEF4444)
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 /*
  * ================================================================
@@ -133,13 +129,13 @@ fun EditDeviceContent(
                         text = heladeraActual.nombre,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = TextPrimary
+                        color = ColdSenseTheme.colors.textPrimary
                     )
 
                     Text(
                         text = "Si la temperatura sale de este rango, la heladera pasa a estar en alerta.",
                         fontSize = 14.sp,
-                        color = TextSecondary
+                        color = ColdSenseTheme.colors.textSecondary
                     )
 
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -175,7 +171,7 @@ fun EditDeviceContent(
                         Text(
                             text = mensaje,
                             fontSize = 13.sp,
-                            color = DangerRed
+                            color = ColdSenseTheme.colors.danger
                         )
                     }
                 }
@@ -238,7 +234,7 @@ private fun EditDeviceHeader(onBack: () -> Unit) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Volver",
-                tint = TextPrimary
+                tint = ColdSenseTheme.colors.textPrimary
             )
         }
 
@@ -248,7 +244,7 @@ private fun EditDeviceHeader(onBack: () -> Unit) {
             textAlign = TextAlign.Center,
             fontSize = 17.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary
+            color = ColdSenseTheme.colors.textPrimary
         )
 
         // Espacio del mismo ancho que el botón de volver, para centrar el título

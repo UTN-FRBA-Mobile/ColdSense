@@ -41,7 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -70,6 +69,7 @@ import ar.edu.utn.coldsense.ui.components.RefrescoPeriodico
 import ar.edu.utn.coldsense.ui.components.Spinner
 import ar.edu.utn.coldsense.utils.formatTemperature
 import kotlinx.coroutines.launch
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 /*
  * ================================================================
@@ -265,13 +265,13 @@ private fun HeladeraCard(
                 .fillMaxHeight()
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFF1E6FE0).copy(alpha = 0.10f)),
+                .background(ColdSenseTheme.colors.primary.copy(alpha = 0.10f)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = Icons.Default.Kitchen,
                 contentDescription = null,
-                tint = Color(0xFF1E6FE0),
+                tint = ColdSenseTheme.colors.primary,
                 modifier = Modifier.fillMaxSize(0.6f)
             )
         }
@@ -286,7 +286,7 @@ private fun HeladeraCard(
                 text = heladera.nombre,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF1A1F36),
+                color = ColdSenseTheme.colors.textPrimary,
                 maxLines = 1
             )
 
@@ -296,7 +296,7 @@ private fun HeladeraCard(
                 text = formatTemperature(heladera.temperaturaActual),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF1A1F36)
+                color = ColdSenseTheme.colors.textPrimary
             )
         }
 

@@ -73,14 +73,7 @@ import ar.edu.utn.coldsense.utils.formatHora
 import ar.edu.utn.coldsense.utils.formatLimite
 import ar.edu.utn.coldsense.utils.formatTemperature
 import ar.edu.utn.coldsense.utils.formatUltimaLectura
-
-// Colores de la pantalla
-private val TextPrimary = Color(0xFF1A1F36)
-private val TextSecondary = Color(0xFF6B7280)
-private val PrimaryBlue = Color(0xFF1E6FE0)
-private val CardBorder = Color(0xFFE5E8EF)
-private val SurfaceGray = Color(0xFFF5F6F8)
-private val DangerRed = Color(0xFFEF4444)
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 /*
  * ================================================================
@@ -244,7 +237,7 @@ private fun DetailHeader(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Volver",
-                tint = TextPrimary
+                tint = ColdSenseTheme.colors.textPrimary
             )
         }
 
@@ -254,7 +247,7 @@ private fun DetailHeader(
             textAlign = TextAlign.Center,
             fontSize = 17.sp,
             fontWeight = FontWeight.SemiBold,
-            color = TextPrimary,
+            color = ColdSenseTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -263,7 +256,7 @@ private fun DetailHeader(
             Icon(
                 imageVector = Icons.Default.Edit,
                 contentDescription = "Editar parámetros",
-                tint = if (editEnabled) PrimaryBlue else PrimaryBlue.copy(alpha = 0.3f)
+                tint = if (editEnabled) ColdSenseTheme.colors.primary else ColdSenseTheme.colors.primary.copy(alpha = 0.3f)
             )
         }
     }
@@ -343,13 +336,13 @@ private fun DetailBody(
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = null,
-                tint = DangerRed,
+                tint = ColdSenseTheme.colors.danger,
                 modifier = Modifier.size(18.dp)
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = "Eliminar dispositivo",
-                color = DangerRed,
+                color = ColdSenseTheme.colors.danger,
                 fontWeight = FontWeight.SemiBold
             )
         }
@@ -388,7 +381,7 @@ private fun EstadoActualCard(status: HeladeraStatus) {
                     text = status.label,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Medium,
-                    color = TextPrimary
+                    color = ColdSenseTheme.colors.textPrimary
                 )
             }
         }
@@ -397,7 +390,7 @@ private fun EstadoActualCard(status: HeladeraStatus) {
         Icon(
             imageVector = Icons.Default.Kitchen,
             contentDescription = null,
-            tint = PrimaryBlue,
+            tint = ColdSenseTheme.colors.primary,
             modifier = Modifier.size(56.dp)
         )
     }
@@ -414,12 +407,12 @@ private fun TemperaturaActual(heladera: Heladera) {
             text = formatTemperature(heladera.temperaturaActual),
             fontSize = 40.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary
+            color = ColdSenseTheme.colors.textPrimary
         )
         Text(
             text = "Última lectura: ${formatUltimaLectura(heladera.ultimaLectura)}",
             fontSize = 13.sp,
-            color = TextSecondary
+            color = ColdSenseTheme.colors.textSecondary
         )
     }
 }
@@ -429,7 +422,7 @@ private fun RangoCard(heladera: Heladera, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(SurfaceGray)
+            .background(ColdSenseTheme.colors.surfaceMuted)
             .padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -442,13 +435,13 @@ private fun RangoCard(heladera: Heladera, modifier: Modifier = Modifier) {
 @Composable
 private fun LimiteRow(label: String, valor: Double) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(text = label, fontSize = 14.sp, color = TextPrimary)
+        Text(text = label, fontSize = 14.sp, color = ColdSenseTheme.colors.textPrimary)
         Spacer(modifier = Modifier.width(6.dp))
         Text(
             text = formatLimite(valor),
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary
+            color = ColdSenseTheme.colors.textPrimary
         )
     }
 }
@@ -458,7 +451,7 @@ private fun SensorCard(heladera: Heladera, status: HeladeraStatus, modifier: Mod
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .border(1.dp, CardBorder, RoundedCornerShape(12.dp))
+            .border(1.dp, ColdSenseTheme.colors.border, RoundedCornerShape(12.dp))
             .padding(14.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -472,7 +465,7 @@ private fun SensorCard(heladera: Heladera, status: HeladeraStatus, modifier: Mod
 
         IconTextRow(
             icon = Icons.Default.BatteryStd,
-            iconColor = TextSecondary,
+            iconColor = ColdSenseTheme.colors.textSecondary,
             text = "Batería: ${heladera.bateria?.let { "$it%" } ?: "--"}"
         )
     }
@@ -491,13 +484,13 @@ private fun LecturasSection(lecturas: List<Lectura>, onVerTodas: () -> Unit) {
                 text = "Últimas lecturas",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = TextPrimary
+                color = ColdSenseTheme.colors.textPrimary
             )
             Text(
                 text = "Ver todas",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
-                color = PrimaryBlue,
+                color = ColdSenseTheme.colors.primary,
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
                     .clickable(onClick = onVerTodas)
@@ -509,18 +502,18 @@ private fun LecturasSection(lecturas: List<Lectura>, onVerTodas: () -> Unit) {
             Text(
                 text = "Todavía no hay lecturas registradas.",
                 fontSize = 14.sp,
-                color = TextSecondary
+                color = ColdSenseTheme.colors.textSecondary
             )
         } else {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(SurfaceGray)
+                    .background(ColdSenseTheme.colors.surfaceMuted)
             ) {
                 lecturas.forEachIndexed { index, lectura ->
                     if (index > 0) {
-                        HorizontalDivider(color = CardBorder)
+                        HorizontalDivider(color = ColdSenseTheme.colors.border)
                     }
                     Row(
                         modifier = Modifier
@@ -531,13 +524,13 @@ private fun LecturasSection(lecturas: List<Lectura>, onVerTodas: () -> Unit) {
                         Text(
                             text = formatHora(lectura.fecha),
                             fontSize = 14.sp,
-                            color = TextPrimary
+                            color = ColdSenseTheme.colors.textPrimary
                         )
                         Text(
                             text = formatTemperature(lectura.temperatura),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
-                            color = TextPrimary
+                            color = ColdSenseTheme.colors.textPrimary
                         )
                     }
                 }
@@ -557,7 +550,7 @@ private fun CardTitle(text: String) {
         text = text,
         fontSize = 12.sp,
         fontWeight = FontWeight.Medium,
-        color = TextSecondary
+        color = ColdSenseTheme.colors.textSecondary
     )
 }
 
@@ -571,7 +564,7 @@ private fun IconTextRow(icon: ImageVector, iconColor: Color, text: String) {
             modifier = Modifier.size(16.dp)
         )
         Spacer(modifier = Modifier.width(6.dp))
-        Text(text = text, fontSize = 13.sp, color = TextPrimary)
+        Text(text = text, fontSize = 13.sp, color = ColdSenseTheme.colors.textPrimary)
     }
 }
 
