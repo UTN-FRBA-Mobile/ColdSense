@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">App</string>
+    <string name="app_name" translatable="false">App</string>
 
     <!-- Comunes -->
     <string name="comun_volver">Volver</string>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Idiomas que se pueden elegir para la app desde los ajustes de Android 13+ -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="es" />
+    <locale android:name="en" />
+</locale-config>
