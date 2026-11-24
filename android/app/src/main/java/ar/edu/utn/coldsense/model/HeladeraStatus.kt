@@ -3,43 +3,59 @@ package ar.edu.utn.coldsense.model
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 enum class HeladeraStatus(
     val label: String,
-    val color: Color,
-    val chipBackground: Color,
-    val cardBackground: Color,
-    val cardBorder: Color,
-    val signalIcon: ImageVector,
-    val signalColor: Color
+    val signalIcon: ImageVector
 ) {
     Normal(
         label = "Normal",
-        color = Color(0xFF2E9E5B),
-        chipBackground = Color(0xFFE3F5EA),
-        cardBackground = Color.White,
-        cardBorder = Color(0xFFE5E8EF),
-        signalIcon = Icons.Default.Wifi,
-        signalColor = Color(0xFF2E9E5B)
+        signalIcon = Icons.Default.Wifi
     ),
     Alert(
         label = "En alerta",
-        color = Color(0xFFD93025),
-        chipBackground = Color(0xFFFFD6D6),
-        cardBackground = Color.White,
-        cardBorder = Color(0xFFE5E8EF),
-        signalIcon = Icons.Default.Wifi,
-        signalColor = Color(0xFFD93025)
+        signalIcon = Icons.Default.Wifi
     ),
     Disconnected(
         label = "Sin conexión",
-        color = Color(0xFFD93025),
-        chipBackground = Color(0xFFFFE0E0),
-        cardBackground = Color.White,
-        cardBorder = Color(0xFFE5E8EF),
-        signalIcon = Icons.Default.WifiOff,
-        signalColor = Color(0xFF8A8F98)
+        signalIcon = Icons.Default.WifiOff
     )
 }
+
+// Los colores dependen del tema (claro u oscuro), por eso se leen desde la UI
+
+val HeladeraStatus.color: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = when (this) {
+        HeladeraStatus.Normal -> ColdSenseTheme.colors.success
+        HeladeraStatus.Alert, HeladeraStatus.Disconnected -> ColdSenseTheme.colors.alert
+    }
+
+val HeladeraStatus.chipBackground: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = when (this) {
+        HeladeraStatus.Normal -> ColdSenseTheme.colors.successBackground
+        HeladeraStatus.Alert -> ColdSenseTheme.colors.alertBackground
+        HeladeraStatus.Disconnected -> ColdSenseTheme.colors.disconnectedBackground
+    }
+
+val HeladeraStatus.cardBorder: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = ColdSenseTheme.colors.border
+
+val HeladeraStatus.signalColor: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = when (this) {
+        HeladeraStatus.Normal -> ColdSenseTheme.colors.success
+        HeladeraStatus.Alert -> ColdSenseTheme.colors.alert
+        HeladeraStatus.Disconnected -> ColdSenseTheme.colors.disconnectedSignal
+    }

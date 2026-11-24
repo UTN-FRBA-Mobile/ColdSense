@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 /**
  * Componente reutilizable que muestra un mensaje de error
@@ -40,7 +41,8 @@ fun ErrorMessage(
     buttonText: String = "Reintentar",
     onClick: () -> Unit
 ) {
-    val errorColor = Color(0xFFE57373)
+    val colors = ColdSenseTheme.colors
+    val errorColor = colors.errorDialogAccent
 
     Box(
         modifier = Modifier
@@ -59,7 +61,7 @@ fun ErrorMessage(
                     shape = RoundedCornerShape(24.dp)
                 )
                 .background(
-                    color = Color(0xFFFFDADA),
+                    color = colors.errorDialogBackground,
                     shape = RoundedCornerShape(24.dp)
                 )
                 .padding(
@@ -83,7 +85,7 @@ fun ErrorMessage(
                 text = "Algo salió mal",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF8B1A1A),
+                color = colors.errorDialogTitle,
                 textAlign = TextAlign.Center
             )
 
@@ -91,7 +93,7 @@ fun ErrorMessage(
             Text(
                 text = errorText,
                 fontSize = 15.sp,
-                color = Color(0xFF6D3030),
+                color = colors.errorDialogText,
                 textAlign = TextAlign.Center
             )
 

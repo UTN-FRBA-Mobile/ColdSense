@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 
 /**
  * Destinos disponibles en la barra de navegación inferior.
@@ -102,7 +103,7 @@ fun NavigationBar(
                         width = 1.dp,
                         brush = Brush.verticalGradient(
                             colors = listOf(
-                                Color.White.copy(alpha = 0.8f),
+                                ColdSenseTheme.colors.glassReflection,
                                 contentColor.copy(alpha = 0.15f)
                             )
                         )
