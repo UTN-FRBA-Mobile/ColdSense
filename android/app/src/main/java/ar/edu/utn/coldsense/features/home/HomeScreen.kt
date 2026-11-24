@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Kitchen
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,6 +52,7 @@ import ar.edu.utn.coldsense.features.auth.LoginScreen
 import ar.edu.utn.coldsense.data.auth.FirebaseAuthService
 import ar.edu.utn.coldsense.features.device.detail.DetailScreen
 import ar.edu.utn.coldsense.features.device.search.SearchDeviceScreen
+import ar.edu.utn.coldsense.features.settings.SettingsScreen
 import ar.edu.utn.coldsense.model.Heladera
 import ar.edu.utn.coldsense.model.HeladeraStatus
 import ar.edu.utn.coldsense.model.calcularEstado
@@ -92,6 +94,7 @@ class HomeScreen : Screen {
             viewModel = viewModel,
             onAddDevice = { navigator?.push(SearchDeviceScreen()) },
             onHeladeraClick = { id -> navigator?.push(DetailScreen(id)) },
+            onSettings = { navigator?.push(SettingsScreen()) },
             // Vuelvo al login y borro el historial, así "atrás" no regresa al Home
             onLogout = {
                 coroutineScope.launch {
@@ -125,6 +128,7 @@ fun HomeContent(
     viewModel: HomeViewModel,
     onAddDevice: () -> Unit,
     onHeladeraClick: (Long) -> Unit,
+    onSettings: () -> Unit,
     onLogout: () -> Unit,
     onNavigate: (BottomNavDestination) -> Unit
 ) {
@@ -164,6 +168,13 @@ fun HomeContent(
             CommonHeader(
                 title = "Mis heladeras",
                 actions = {
+                    IconButton(onClick = onSettings) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Configuración",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
                     IconButton(onClick = { showLogoutDialog = true }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Logout,
