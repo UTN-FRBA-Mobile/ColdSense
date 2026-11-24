@@ -71,6 +71,8 @@
     <string name="tema_sistema">Same as the phone</string>
     <string name="tema_claro">Light</string>
     <string name="tema_oscuro">Dark</string>
+    <string name="configuracion_idioma">Language</string>
+    <string name="idioma_sistema">Same as the phone</string>
 
     <!-- Notificaciones -->
     <string name="notificaciones_canal_nombre">Temperature alerts</string>

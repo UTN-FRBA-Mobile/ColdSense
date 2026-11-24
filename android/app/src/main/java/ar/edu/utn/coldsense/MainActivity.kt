@@ -23,6 +23,8 @@ import ar.edu.utn.coldsense.data.preferencias.PreferenciasTema
 import ar.edu.utn.coldsense.features.auth.LoginScreen
 import ar.edu.utn.coldsense.notifications.crearCanalAlertas
 import ar.edu.utn.coldsense.ui.theme.AppTheme
+import android.content.Context
+import ar.edu.utn.coldsense.data.preferencias.PreferenciasIdioma
 
 class MainActivity : ComponentActivity() {
 
@@ -30,6 +32,11 @@ class MainActivity : ComponentActivity() {
     private val pedirPermisos = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { }
+
+    // Android 12 o anterior: el idioma elegido en la app se aplica acá (en 13+ lo hace Android)
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(PreferenciasIdioma.aplicar(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

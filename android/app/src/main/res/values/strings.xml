@@ -73,6 +73,11 @@
     <string name="tema_sistema">Igual que el celular</string>
     <string name="tema_claro">Claro</string>
     <string name="tema_oscuro">Oscuro</string>
+    <string name="configuracion_idioma">Idioma</string>
+    <string name="idioma_sistema">Igual que el celular</string>
+    <!-- Cada idioma se muestra con su nombre en ese idioma, así se reconoce aunque no entiendas el actual -->
+    <string name="idioma_espanol" translatable="false">Español</string>
+    <string name="idioma_ingles" translatable="false">English</string>
 
     <!-- Notificaciones -->
     <string name="notificaciones_canal_nombre">Alertas de temperatura</string>
