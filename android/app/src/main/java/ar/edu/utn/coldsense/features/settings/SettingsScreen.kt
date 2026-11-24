@@ -48,6 +48,12 @@ import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 import androidx.annotation.StringRes
 import androidx.compose.ui.res.stringResource
 import ar.edu.utn.coldsense.R
+import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.filled.Language
+import ar.edu.utn.coldsense.data.preferencias.Idioma
+import ar.edu.utn.coldsense.data.preferencias.PreferenciasIdioma
 
 /*
  * ================================================================
@@ -61,10 +67,14 @@ class SettingsScreen : Screen {
 
         val navigator = LocalNavigator.current
         val modoTema by PreferenciasTema.modo.collectAsState()
+        val activity = LocalActivity.current
+        val idioma = activity?.let { PreferenciasIdioma.actual(it) } ?: Idioma.Sistema
 
         SettingsContent(
             modoTema = modoTema,
             onModoTemaClick = PreferenciasTema::cambiar,
+            idioma = idioma,
+            onIdiomaClick = { nuevo -> activity?.let { PreferenciasIdioma.cambiar(it, nuevo) } },
             onBack = { navigator?.pop() }
         )
     }
@@ -79,6 +89,8 @@ class SettingsScreen : Screen {
 fun SettingsContent(
     modoTema: ModoTema,
     onModoTemaClick: (ModoTema) -> Unit,
+    idioma: Idioma,
+    onIdiomaClick: (Idioma) -> Unit,
     onBack: () -> Unit
 ) {
     Column(
@@ -97,30 +109,38 @@ fun SettingsContent(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
 
-            Text(
-                text = stringResource(R.string.configuracion_apariencia),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = ColdSenseTheme.colors.textPrimary
-            )
+            SeccionTitulo(texto = stringResource(R.string.configuracion_apariencia))
 
             // Opciones del tema: se aplica apenas se toca, sin botón de guardar
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(12.dp))
-                    .border(1.dp, ColdSenseTheme.colors.border, RoundedCornerShape(12.dp))
-                    .selectableGroup()
-            ) {
+            GrupoOpciones {
                 ModoTema.entries.forEachIndexed { index, modo ->
                     if (index > 0) {
                         HorizontalDivider(color = ColdSenseTheme.colors.border)
                     }
-                    OpcionTema(
+                    Opcion(
                         icon = modo.icono(),
                         texto = stringResource(modo.texto()),
                         seleccionada = modo == modoTema,
                         onClick = { onModoTemaClick(modo) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            SeccionTitulo(texto = stringResource(R.string.configuracion_idioma))
+
+            // Al elegir otro idioma la pantalla se vuelve a dibujar con los textos nuevos
+            GrupoOpciones {
+                Idioma.entries.forEachIndexed { index, opcion ->
+                    if (index > 0) {
+                        HorizontalDivider(color = ColdSenseTheme.colors.border)
+                    }
+                    Opcion(
+                        icon = opcion.icono(),
+                        texto = stringResource(opcion.texto()),
+                        seleccionada = opcion == idioma,
+                        onClick = { onIdiomaClick(opcion) }
                     )
                 }
             }
@@ -170,7 +190,30 @@ private fun SettingsHeader(onBack: () -> Unit) {
  * ================================================================
  */
 @Composable
-private fun OpcionTema(
+private fun SeccionTitulo(texto: String) {
+    Text(
+        text = texto,
+        fontSize = 16.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = ColdSenseTheme.colors.textPrimary
+    )
+}
+
+/** Opciones de una sola elección, dentro de un recuadro. */
+@Composable
+private fun GrupoOpciones(content: @Composable ColumnScope.() -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .border(1.dp, ColdSenseTheme.colors.border, RoundedCornerShape(12.dp))
+            .selectableGroup(),
+        content = content
+    )
+}
+
+@Composable
+private fun Opcion(
     icon: ImageVector,
     texto: String,
     seleccionada: Boolean,
@@ -219,4 +262,16 @@ private fun ModoTema.icono(): ImageVector = when (this) {
     ModoTema.Sistema -> Icons.Default.PhoneAndroid
     ModoTema.Claro -> Icons.Default.LightMode
     ModoTema.Oscuro -> Icons.Default.DarkMode
+}
+
+@StringRes
+private fun Idioma.texto(): Int = when (this) {
+    Idioma.Sistema -> R.string.idioma_sistema
+    Idioma.Espanol -> R.string.idioma_espanol
+    Idioma.Ingles -> R.string.idioma_ingles
+}
+
+private fun Idioma.icono(): ImageVector = when (this) {
+    Idioma.Sistema -> Icons.Default.PhoneAndroid
+    Idioma.Espanol, Idioma.Ingles -> Icons.Default.Language
 }
