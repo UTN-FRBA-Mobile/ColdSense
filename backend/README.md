@@ -18,7 +18,18 @@ export FIREBASE_PROJECT_ID="coldsense-159a5"
 mvn spring-boot:run
 ```
 
-Queda escuchando en http://localhost:8080. Si faltan las credenciales de Admin, el backend no inicia.
+Queda escuchando en http://localhost:8080.
+
+### Modo demo (sin credenciales)
+Si no configurás `GOOGLE_APPLICATION_CREDENTIALS`, el backend arranca igual en **modo demo** (lo avisa en el log):
+solo acepta llamadas desde esta PC (el emulador cuenta como esta PC) y no manda push. Sirve para probar la app
+con el usuario mock de los builds debug (`demo@coldsense.com` / `demo1234`) sin cuenta de Firebase:
+
+```bash
+mvn spring-boot:run
+```
+
+Desde un celular físico el modo demo no sirve: sus llamadas no vienen de esta PC y se rechazan.
 
 La app obtiene un ID token de Firebase después del registro o inicio de sesión y lo manda como `Authorization: Bearer <token>` en cada llamada. El servidor verifica firma, vencimiento y proyecto antes de atender el endpoint. La identidad verificada queda disponible en la solicitud como atributo `firebaseUid`; la autorización por dueño de cada heladera todavía no está implementada.
 
