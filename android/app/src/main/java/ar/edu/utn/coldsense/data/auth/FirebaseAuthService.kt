@@ -14,6 +14,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import androidx.annotation.StringRes
+import ar.edu.utn.coldsense.R
 
 class FirebaseAuthService(context: Context) : AuthService {
 
@@ -61,9 +63,7 @@ class FirebaseAuthService(context: Context) : AuthService {
         action: (FirebaseAuth) -> Task<*>
     ): AuthResult {
         val auth = firebaseAuth
-            ?: return AuthResult.Failure(
-                "Firebase no está configurado. Agregá google-services.json al módulo Android."
-            )
+            ?: return AuthResult.Failure(R.string.login_error_firebase_sin_configurar)
 
         return try {
             action(auth).awaitCompletion()
@@ -75,24 +75,25 @@ class FirebaseAuthService(context: Context) : AuthService {
         }
     }
 
-    private fun Exception.toUserMessage(): String {
+    @StringRes
+    private fun Exception.toUserMessage(): Int {
         val authErrorCode = (this as? FirebaseAuthException)?.errorCode
         return when {
-            this is FirebaseNetworkException -> "No se pudo conectar. Revisá tu conexión."
-            authErrorCode == "ERROR_INVALID_EMAIL" -> "Ingresá un email válido"
+            this is FirebaseNetworkException -> R.string.login_error_sin_conexion
+            authErrorCode == "ERROR_INVALID_EMAIL" -> R.string.login_error_email_invalido
             authErrorCode == "ERROR_EMAIL_ALREADY_IN_USE" ->
-                "Ya existe una cuenta con ese email"
+                R.string.login_error_email_en_uso
             authErrorCode == "ERROR_WEAK_PASSWORD" ->
-                "La contraseña debe tener al menos 6 caracteres"
+                R.string.login_error_contrasena_corta
             authErrorCode == "ERROR_USER_NOT_FOUND" ||
                 authErrorCode == "ERROR_WRONG_PASSWORD" ||
                 authErrorCode == "ERROR_INVALID_CREDENTIAL" ->
-                "El email o la contraseña son incorrectos"
+                R.string.login_error_credenciales
             authErrorCode == "ERROR_TOO_MANY_REQUESTS" ->
-                "Hubo demasiados intentos. Probá de nuevo más tarde."
+                R.string.login_error_demasiados_intentos
             authErrorCode == "ERROR_OPERATION_NOT_ALLOWED" ->
-                "Habilitá este método de acceso en Firebase."
-            else -> "No se pudo completar la operación. Intentá de nuevo."
+                R.string.login_error_metodo_deshabilitado
+            else -> R.string.login_error_generico
         }
     }
 }

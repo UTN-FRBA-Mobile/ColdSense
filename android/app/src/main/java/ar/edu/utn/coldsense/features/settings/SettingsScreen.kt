@@ -45,6 +45,9 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import ar.edu.utn.coldsense.data.preferencias.ModoTema
 import ar.edu.utn.coldsense.data.preferencias.PreferenciasTema
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
 
 /*
  * ================================================================
@@ -95,7 +98,7 @@ fun SettingsContent(
         ) {
 
             Text(
-                text = "Apariencia",
+                text = stringResource(R.string.configuracion_apariencia),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = ColdSenseTheme.colors.textPrimary
@@ -115,7 +118,7 @@ fun SettingsContent(
                     }
                     OpcionTema(
                         icon = modo.icono(),
-                        texto = modo.texto(),
+                        texto = stringResource(modo.texto()),
                         seleccionada = modo == modoTema,
                         onClick = { onModoTemaClick(modo) }
                     )
@@ -142,13 +145,13 @@ private fun SettingsHeader(onBack: () -> Unit) {
         IconButton(onClick = onBack) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Volver",
+                contentDescription = stringResource(R.string.comun_volver),
                 tint = ColdSenseTheme.colors.textPrimary
             )
         }
 
         Text(
-            text = "Configuración",
+            text = stringResource(R.string.comun_configuracion),
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             fontSize = 17.sp,
@@ -205,10 +208,11 @@ private fun OpcionTema(
     }
 }
 
-private fun ModoTema.texto(): String = when (this) {
-    ModoTema.Sistema -> "Igual que el celular"
-    ModoTema.Claro -> "Claro"
-    ModoTema.Oscuro -> "Oscuro"
+@StringRes
+private fun ModoTema.texto(): Int = when (this) {
+    ModoTema.Sistema -> R.string.tema_sistema
+    ModoTema.Claro -> R.string.tema_claro
+    ModoTema.Oscuro -> R.string.tema_oscuro
 }
 
 private fun ModoTema.icono(): ImageVector = when (this) {

@@ -14,10 +14,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
+import androidx.annotation.StringRes
+import ar.edu.utn.coldsense.R
+import ar.edu.utn.coldsense.data.auth.AuthError
 
 data class LoginUiState(
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
+    @StringRes val errorMessage: Int? = null,
     val isAuthenticated: Boolean = false
 )
 
@@ -55,11 +58,11 @@ class LoginViewModel(
         val normalizedEmail = email.trim()
         val validationError = when {
             normalizedEmail.isBlank() || password.isBlank() ->
-                "Completá email y contraseña"
+                R.string.login_error_completar_campos
             !Patterns.EMAIL_ADDRESS.matcher(normalizedEmail).matches() ->
-                "Ingresá un email válido"
+                R.string.login_error_email_invalido
             isRegistration && password.length < 6 ->
-                "La contraseña debe tener al menos 6 caracteres"
+                R.string.login_error_contrasena_corta
             else -> null
         }
 
@@ -92,11 +95,11 @@ class LoginViewModel(
             } catch (exception: CancellationException) {
                 throw exception
             } catch (exception: GetCredentialException) {
-                AuthResult.Failure("No se pudo iniciar sesión con Google. Intentá de nuevo.")
-            } catch (exception: IllegalStateException) {
-                AuthResult.Failure(exception.message ?: "No se pudo iniciar sesión con Google.")
+                AuthResult.Failure(R.string.login_error_google)
+            } catch (exception: AuthError) {
+                AuthResult.Failure(exception.mensaje)
             } catch (exception: Exception) {
-                AuthResult.Failure("No se pudo completar la operación. Intentá de nuevo.")
+                AuthResult.Failure(R.string.login_error_generico)
             }
 
             _uiState.update {

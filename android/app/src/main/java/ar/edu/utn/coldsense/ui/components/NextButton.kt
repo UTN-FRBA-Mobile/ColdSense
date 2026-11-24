@@ -13,6 +13,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
 
 /**
  * Componente reutilizable para avanzar a la siguiente acción.
@@ -25,7 +27,7 @@ import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 fun NextButton(
     onClick: () -> Unit,
     enabled: Boolean = true,
-    text: String = "Continuar",
+    text: String = stringResource(R.string.comun_continuar),
     isLoading: Boolean = false
 ) {
     Button(

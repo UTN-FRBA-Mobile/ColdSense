@@ -72,6 +72,8 @@ import ar.edu.utn.coldsense.ui.components.Spinner
 import ar.edu.utn.coldsense.utils.formatTemperature
 import kotlinx.coroutines.launch
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
 
 /*
  * ================================================================
@@ -166,19 +168,19 @@ fun HomeContent(
 
             // Encabezado
             CommonHeader(
-                title = "Mis heladeras",
+                title = stringResource(R.string.home_titulo),
                 actions = {
                     IconButton(onClick = onSettings) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Configuración",
+                            contentDescription = stringResource(R.string.comun_configuracion),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
                     IconButton(onClick = { showLogoutDialog = true }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Logout,
-                            contentDescription = "Cerrar sesión",
+                            contentDescription = stringResource(R.string.home_cerrar_sesion),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -189,7 +191,7 @@ fun HomeContent(
             Box(
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
             ) {
-                NextButton(onClick = { onAddDevice() }, text = "Agregar dispositivo")
+                NextButton(onClick = { onAddDevice() }, text = stringResource(R.string.home_agregar_dispositivo))
             }
 
             if (isLoading) {
@@ -228,9 +230,9 @@ fun HomeContent(
         // Confirmación para cerrar sesión
         if (showLogoutDialog) {
             ConfirmDeleteDialog(
-                title = "¿Cerrar sesión?",
-                message = "Vas a volver a la pantalla de inicio de sesión.",
-                confirmText = "Cerrar sesión",
+                title = stringResource(R.string.home_cerrar_sesion_titulo),
+                message = stringResource(R.string.home_cerrar_sesion_mensaje),
+                confirmText = stringResource(R.string.home_cerrar_sesion),
                 onConfirm = {
                     showLogoutDialog = false
                     onLogout()
@@ -242,7 +244,7 @@ fun HomeContent(
         // Mensaje si hubo error
         if (isError) {
             ErrorMessage(
-                errorText = "No se pudieron cargar las heladeras. Revisá tu conexión e intentá de nuevo.",
+                errorText = stringResource(R.string.home_error_cargar),
                 onClick = { viewModel.loadHeladeras() }
             )
         }
@@ -313,7 +315,7 @@ private fun HeladeraCard(
 
         Icon(
             imageVector = heladeraStatus.signalIcon,
-            contentDescription = heladeraStatus.label,
+            contentDescription = stringResource(heladeraStatus.label),
             tint = heladeraStatus.signalColor,
             modifier = Modifier
                 .align(Alignment.Top)
@@ -351,7 +353,7 @@ private fun StatusChip(
 
         // Texto del estado
         Text(
-            text = status.label,
+            text = stringResource(status.label),
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
             color = status.color

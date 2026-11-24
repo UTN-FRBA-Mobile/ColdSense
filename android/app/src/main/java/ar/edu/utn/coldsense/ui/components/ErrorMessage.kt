@@ -25,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
+import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
 
 /**
  * Componente reutilizable que muestra un mensaje de error
@@ -37,8 +39,8 @@ import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
  */
 @Composable
 fun ErrorMessage(
-    errorText: String = "Ocurrió un error inesperado. Por favor, inténtelo de nuevo.",
-    buttonText: String = "Reintentar",
+    errorText: String = stringResource(R.string.error_inesperado),
+    buttonText: String = stringResource(R.string.comun_reintentar),
     onClick: () -> Unit
 ) {
     val colors = ColdSenseTheme.colors
@@ -75,14 +77,14 @@ fun ErrorMessage(
             // Ícono de error
             Icon(
                 imageVector = Icons.Default.Error,
-                contentDescription = "Error",
+                contentDescription = stringResource(R.string.error_icono),
                 tint = errorColor,
                 modifier = Modifier.size(56.dp)
             )
 
             // Título
             Text(
-                text = "Algo salió mal",
+                text = stringResource(R.string.error_titulo),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = colors.errorDialogTitle,

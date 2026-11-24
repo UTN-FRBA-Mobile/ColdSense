@@ -42,6 +42,9 @@ import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import ar.edu.utn.coldsense.data.auth.crearAuthService
 import ar.edu.utn.coldsense.features.home.HomeScreen
+import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
+import ar.edu.utn.coldsense.data.auth.AuthError
 
 class LoginScreen : Screen {
 
@@ -106,14 +109,14 @@ private fun LoginContent(
         )
 
         Text(
-            text = if (isRegistering) "Creá una cuenta para continuar" else "Monitoreá el estado de tus heladeras",
+            text = stringResource(if (isRegistering) R.string.login_subtitulo_registro else R.string.login_subtitulo),
             modifier = Modifier.padding(top = 8.dp, bottom = 28.dp)
         )
 
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
+            label = { Text(stringResource(R.string.login_email)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email
@@ -124,14 +127,14 @@ private fun LoginContent(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Contraseña") },
+            label = { Text(stringResource(R.string.login_contrasena)) },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password
             ),
             supportingText = if (isRegistering) {
-                { Text("Usá al menos 6 caracteres") }
+                { Text(stringResource(R.string.login_contrasena_ayuda)) }
             } else {
                 null
             },
@@ -142,7 +145,7 @@ private fun LoginContent(
 
         state.errorMessage?.let { message ->
             Text(
-                text = message,
+                text = stringResource(message),
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(top = 12.dp)
             )
@@ -163,12 +166,12 @@ private fun LoginContent(
                     strokeWidth = 2.dp
                 )
             } else {
-                Text(if (isRegistering) "Crear cuenta" else "Iniciar sesión")
+                Text(stringResource(if (isRegistering) R.string.login_crear_cuenta else R.string.login_iniciar_sesion))
             }
         }
 
         Text(
-            text = "o",
+            text = stringResource(R.string.login_separador),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 8.dp)
         )
@@ -180,7 +183,7 @@ private fun LoginContent(
                 .fillMaxWidth()
                 .padding(top = 8.dp)
         ) {
-            Text("Continuar con Google")
+            Text(stringResource(R.string.login_continuar_con_google))
         }
 
         TextButton(
@@ -192,8 +195,10 @@ private fun LoginContent(
             modifier = Modifier.padding(top = 8.dp)
         ) {
             Text(
-                if (isRegistering) "¿Ya tenés cuenta? Iniciá sesión"
-                else "¿No tenés cuenta? Registrate"
+                stringResource(
+                    if (isRegistering) R.string.login_ir_a_inicio_sesion
+                    else R.string.login_ir_a_registro
+                )
             )
         }
     }
@@ -209,9 +214,7 @@ private suspend fun requestGoogleIdToken(
         context.packageName
     )
     if (clientIdResource == 0) {
-        throw IllegalStateException(
-            "Falta el cliente OAuth web. Descargá el google-services.json actualizado de Firebase."
-        )
+        throw AuthError(R.string.login_error_google_sin_cliente)
     }
 
     // Flujo del botón "Continuar con Google": muestra el selector de cuentas
@@ -230,7 +233,7 @@ private suspend fun requestGoogleIdToken(
         ) {
             GoogleIdTokenCredential.createFrom(credential.data).idToken
         } else {
-            throw IllegalStateException("Google devolvió una credencial incompatible.")
+            throw AuthError(R.string.login_error_google_credencial)
         }
     } catch (_: GetCredentialCancellationException) {
         null

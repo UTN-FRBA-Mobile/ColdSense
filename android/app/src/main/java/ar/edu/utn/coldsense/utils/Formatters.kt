@@ -1,6 +1,9 @@
 package ar.edu.utn.coldsense.utils
 
 import android.text.format.DateUtils
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import ar.edu.utn.coldsense.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -28,13 +31,14 @@ fun formatHora(millis: Long): String {
     return SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(millis))
 }
 
-/** Devuelve el formato "hoy HH:mm" o "dd/MM HH:mm"  |  null -> "sin datos" */
+/** Devuelve el formato "hoy HH:mm" o "dd/MM HH:mm"  |  null -> "sin datos" (en el idioma de la app) */
+@Composable
 fun formatUltimaLectura(millis: Long?): String {
-    if (millis == null) return "sin datos"
+    if (millis == null) return stringResource(R.string.ultima_lectura_sin_datos)
 
     val hora = formatHora(millis)
     return if (DateUtils.isToday(millis)) {
-        "hoy $hora"
+        stringResource(R.string.ultima_lectura_hoy, hora)
     } else {
         "${SimpleDateFormat("dd/MM", Locale.getDefault()).format(Date(millis))} $hora"
     }
