@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import ar.edu.utn.coldsense.features.auth.LoginScreen
-import ar.edu.utn.coldsense.data.auth.FirebaseAuthService
+import ar.edu.utn.coldsense.data.auth.crearAuthService
 import ar.edu.utn.coldsense.features.device.detail.DetailScreen
 import ar.edu.utn.coldsense.features.device.search.SearchDeviceScreen
 import ar.edu.utn.coldsense.model.Heladera
@@ -81,7 +81,7 @@ class HomeScreen : Screen {
 
         val navigator = LocalNavigator.current
         val context = LocalContext.current.applicationContext
-        val authService = remember(context) { FirebaseAuthService(context) }
+        val authService = remember(context) { crearAuthService(context) }
         val coroutineScope = rememberCoroutineScope()
 
         HomeContent(

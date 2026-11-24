@@ -40,7 +40,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import ar.edu.utn.coldsense.data.auth.FirebaseAuthService
+import ar.edu.utn.coldsense.data.auth.crearAuthService
 import ar.edu.utn.coldsense.features.home.HomeScreen
 
 class LoginScreen : Screen {
@@ -54,7 +54,7 @@ class LoginScreen : Screen {
             CredentialManager.create(context)
         }
         val factory = remember(appContext) {
-            LoginViewModelFactory(FirebaseAuthService(appContext))
+            LoginViewModelFactory(crearAuthService(appContext))
         }
         val viewModel: LoginViewModel = viewModel(factory = factory)
         val state by viewModel.uiState.collectAsStateWithLifecycle()
