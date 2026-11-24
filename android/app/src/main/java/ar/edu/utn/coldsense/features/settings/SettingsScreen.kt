@@ -54,6 +54,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.filled.Language
 import ar.edu.utn.coldsense.data.preferencias.Idioma
 import ar.edu.utn.coldsense.data.preferencias.PreferenciasIdioma
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import ar.edu.utn.coldsense.data.auth.crearAuthService
+import ar.edu.utn.coldsense.features.auth.LoginScreen
+import ar.edu.utn.coldsense.ui.components.ConfirmDeleteDialog
+import kotlinx.coroutines.launch
 
 /*
  * ================================================================
@@ -62,6 +75,8 @@ import ar.edu.utn.coldsense.data.preferencias.PreferenciasIdioma
  */
 class SettingsScreen : Screen {
 
+    val viewModel = SettingsViewModel()
+
     @Composable
     override fun Content() {
 
@@ -69,12 +84,23 @@ class SettingsScreen : Screen {
         val modoTema by PreferenciasTema.modo.collectAsState()
         val activity = LocalActivity.current
         val idioma = activity?.let { PreferenciasIdioma.actual(it) } ?: Idioma.Sistema
+        val context = LocalContext.current.applicationContext
+        val authService = remember(context) { crearAuthService(context) }
+        val coroutineScope = rememberCoroutineScope()
 
         SettingsContent(
             modoTema = modoTema,
             onModoTemaClick = PreferenciasTema::cambiar,
             idioma = idioma,
             onIdiomaClick = { nuevo -> activity?.let { PreferenciasIdioma.cambiar(it, nuevo) } },
+            // Vuelvo al login y borro el historial, así "atrás" no regresa a la app
+            onLogout = {
+                coroutineScope.launch {
+                    viewModel.cerrarSesion()
+                    authService.signOut()
+                    navigator?.replaceAll(LoginScreen())
+                }
+            },
             onBack = { navigator?.pop() }
         )
     }
@@ -91,8 +117,12 @@ fun SettingsContent(
     onModoTemaClick: (ModoTema) -> Unit,
     idioma: Idioma,
     onIdiomaClick: (Idioma) -> Unit,
+    onLogout: () -> Unit,
     onBack: () -> Unit
 ) {
+    // Diálogo de cerrar sesión
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -104,6 +134,7 @@ fun SettingsContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .navigationBarsPadding()
                 .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -144,7 +175,27 @@ fun SettingsContent(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            SeccionTitulo(texto = stringResource(R.string.configuracion_cuenta))
+
+            BotonCerrarSesion(onClick = { showLogoutDialog = true })
         }
+    }
+
+    // Confirmación para cerrar sesión
+    if (showLogoutDialog) {
+        ConfirmDeleteDialog(
+            title = stringResource(R.string.configuracion_cerrar_sesion_titulo),
+            message = stringResource(R.string.configuracion_cerrar_sesion_mensaje),
+            confirmText = stringResource(R.string.configuracion_cerrar_sesion),
+            onConfirm = {
+                showLogoutDialog = false
+                onLogout()
+            },
+            onDismiss = { showLogoutDialog = false }
+        )
     }
 }
 
@@ -247,6 +298,35 @@ private fun Opcion(
                 selectedColor = ColdSenseTheme.colors.primary,
                 unselectedColor = ColdSenseTheme.colors.textSecondary
             )
+        )
+    }
+}
+
+/** Fila en rojo para cerrar la sesión; pide confirmación antes. */
+@Composable
+private fun BotonCerrarSesion(onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .border(1.dp, ColdSenseTheme.colors.border, RoundedCornerShape(12.dp))
+            .clickable(onClick = onClick, role = Role.Button)
+            // Misma altura que las filas de las opciones
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.Logout,
+            contentDescription = null,
+            tint = ColdSenseTheme.colors.danger,
+            modifier = Modifier.size(20.dp)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Text(
+            text = stringResource(R.string.configuracion_cerrar_sesion),
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Medium,
+            color = ColdSenseTheme.colors.danger
         )
     }
 }

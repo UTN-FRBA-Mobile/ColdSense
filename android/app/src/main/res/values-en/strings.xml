@@ -61,9 +61,6 @@
     <!-- Home -->
     <string name="home_titulo">My fridges</string>
     <string name="home_agregar_dispositivo">Add device</string>
-    <string name="home_cerrar_sesion">Sign out</string>
-    <string name="home_cerrar_sesion_titulo">Sign out?</string>
-    <string name="home_cerrar_sesion_mensaje">You\'ll go back to the sign-in screen.</string>
     <string name="home_error_cargar">Couldn\'t load the fridges. Check your connection and try again.</string>
 
     <!-- Configuración -->
@@ -73,6 +70,10 @@
     <string name="tema_oscuro">Dark</string>
     <string name="configuracion_idioma">Language</string>
     <string name="idioma_sistema">Same as the phone</string>
+    <string name="configuracion_cuenta">Account</string>
+    <string name="configuracion_cerrar_sesion">Sign out</string>
+    <string name="configuracion_cerrar_sesion_titulo">Sign out?</string>
+    <string name="configuracion_cerrar_sesion_mensaje">You\'ll go back to the sign-in screen.</string>
 
     <!-- Notificaciones -->
     <string name="notificaciones_canal_nombre">Temperature alerts</string>

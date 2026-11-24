@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Kitchen
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -35,21 +34,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
-import ar.edu.utn.coldsense.features.auth.LoginScreen
-import ar.edu.utn.coldsense.data.auth.crearAuthService
 import ar.edu.utn.coldsense.features.device.detail.DetailScreen
 import ar.edu.utn.coldsense.features.device.search.SearchDeviceScreen
 import ar.edu.utn.coldsense.features.settings.SettingsScreen
@@ -63,14 +55,12 @@ import ar.edu.utn.coldsense.model.signalColor
 import ar.edu.utn.coldsense.notifications.CambiosHeladeras
 import ar.edu.utn.coldsense.ui.components.BottomNavDestination
 import ar.edu.utn.coldsense.ui.components.CommonHeader
-import ar.edu.utn.coldsense.ui.components.ConfirmDeleteDialog
 import ar.edu.utn.coldsense.ui.components.ErrorMessage
 import ar.edu.utn.coldsense.ui.components.NavigationBar
 import ar.edu.utn.coldsense.ui.components.NextButton
 import ar.edu.utn.coldsense.ui.components.RefrescoPeriodico
 import ar.edu.utn.coldsense.ui.components.Spinner
 import ar.edu.utn.coldsense.utils.formatTemperature
-import kotlinx.coroutines.launch
 import ar.edu.utn.coldsense.ui.theme.ColdSenseTheme
 import androidx.compose.ui.res.stringResource
 import ar.edu.utn.coldsense.R
@@ -88,23 +78,12 @@ class HomeScreen : Screen {
     override fun Content() {
 
         val navigator = LocalNavigator.current
-        val context = LocalContext.current.applicationContext
-        val authService = remember(context) { crearAuthService(context) }
-        val coroutineScope = rememberCoroutineScope()
 
         HomeContent(
             viewModel = viewModel,
             onAddDevice = { navigator?.push(SearchDeviceScreen()) },
             onHeladeraClick = { id -> navigator?.push(DetailScreen(id)) },
             onSettings = { navigator?.push(SettingsScreen()) },
-            // Vuelvo al login y borro el historial, así "atrás" no regresa al Home
-            onLogout = {
-                coroutineScope.launch {
-                    viewModel.cerrarSesion()
-                    authService.signOut()
-                    navigator?.replaceAll(LoginScreen())
-                }
-            },
             onNavigate = { destination ->
                 when (destination) {
                     BottomNavDestination.Home -> Unit
@@ -131,7 +110,6 @@ fun HomeContent(
     onAddDevice: () -> Unit,
     onHeladeraClick: (Long) -> Unit,
     onSettings: () -> Unit,
-    onLogout: () -> Unit,
     onNavigate: (BottomNavDestination) -> Unit
 ) {
 
@@ -139,9 +117,6 @@ fun HomeContent(
     val isLoading by viewModel.isLoading.collectAsState(false)
     val isError   by viewModel.isError.collectAsState(false)
     val heladeras by viewModel.heladeras.collectAsState()
-
-    // Diálogo de cerrar sesión
-    var showLogoutDialog by remember { mutableStateOf(false) }
 
     // Registro el celular para recibir las alertas
     LaunchedEffect(Unit) {
@@ -174,13 +149,6 @@ fun HomeContent(
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = stringResource(R.string.comun_configuracion),
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    IconButton(onClick = { showLogoutDialog = true }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Logout,
-                            contentDescription = stringResource(R.string.home_cerrar_sesion),
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
@@ -224,20 +192,6 @@ fun HomeContent(
             NavigationBar(
                 selectedDestination = BottomNavDestination.Home,
                 onDestinationSelected = onNavigate
-            )
-        }
-
-        // Confirmación para cerrar sesión
-        if (showLogoutDialog) {
-            ConfirmDeleteDialog(
-                title = stringResource(R.string.home_cerrar_sesion_titulo),
-                message = stringResource(R.string.home_cerrar_sesion_mensaje),
-                confirmText = stringResource(R.string.home_cerrar_sesion),
-                onConfirm = {
-                    showLogoutDialog = false
-                    onLogout()
-                },
-                onDismiss = { showLogoutDialog = false }
             )
         }
 
